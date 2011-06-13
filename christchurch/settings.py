@@ -122,9 +122,6 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 262144
 
 #####  EMAIL  #######
 
-if LIVEBOX:
-    EMAIL_BACKEND = "mailer.backend.DbBackend"
-
 if DEVBOX:
     # For e-mail testing, use fakemail
     EMAIL_HOST = 'localhost'
