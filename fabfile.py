@@ -97,12 +97,7 @@ import sys
 
 # $ cd ~/webapps/christchurch_django/
 # $ mkdir src
-## $ cd src
-## $ mkdir src1
-## $ ln -s src1 current
-## $ cd src1
-## $ virtualenv -p python2.7 env
-## $ cd ../../
+# $ mkdir db
 # $ mv myproject.wsgi project.wsgi
 # $ replace myproject christchurch -- project.wsgi
 # $ rm -rf myproject/
@@ -116,7 +111,9 @@ import sys
 # Then create webfaction app for static media
 
 # Same again for christchurch_django_staging, with a different
-# webapp dir and venv dir
+# webapp dir and venv dir.
+
+# Remember to add password info to ~/.pgpass
 
 env.hosts = ["cciw@christchurchbradford.org.uk"]
 
@@ -174,14 +171,10 @@ PRODUCTION = Target(
     dbname = "cciw_christchurch",
 )
 
-def _prepare_deploy():
-    ensure_dependencies()
-    # test that we can do forwards and backwards migrations?
-    # check that there are no outstanding changes.
-
 def backup_database(target, version):
     fname = "%s-%s.db" % (target.dbname, version.label)
-    run("dump_pg_db.sh %s %s" % (target.dbname, fname))
+    fullname = join(target.webapp_root, 'db', fname)
+    run("dump_pg_db.sh %s %s" % (target.dbname, fullname))
 
 
 def run_venv(command, **kwargs):
@@ -235,25 +228,27 @@ def _restart_apache(target):
         _stop_apache(target)
     _start_apache(target)
 
-def _copy_local_sources(target, version):
-    # Upload local sources. For speed, we:
-    # - make a copy of the sources that are there already, if they exist.
-    # - hg pull the new sources
+def _update_project_sources(target, version):
     # This also copies the virtualenv which is contained in the same folder,
     # which saves a lot of time with installing.
 
     current_srcs = target.current_version.src_dir
 
     if files.exists(current_srcs):
+        # By copying, we can avoid recreating the virtualenv and the project
+        # sources, saving time and bandwidth.
         run("cp -a -L %s %s" % (current_srcs, version.src_dir))
     else:
+        # Starting from scratch
         run("mkdir %s" % version.src_dir)
+        with cd(version.src_dir):
+            run("hg clone ssh://hg@bitbucket.org/spookylukey/christchurch_django project")
 
     with cd(version.project_dir):
         run("hg pull -u")
 
     # Also need to sync files that are not in main sources VCS repo.
-    local("rsync christchurc/settings_priv.py cciw@christchurchbradford.org.uk:%s/christchurch/settings_priv.py")
+    local("rsync christchurch/settings_priv.py cciw@christchurchbradford.org.uk:%s/christchurch/settings_priv.py" % version.project_dir)
 
 def _build_static(version):
     # This always copies all files anyway, and we want to delete any unwanted
@@ -297,12 +292,10 @@ def _update_db(target, version):
 
 
 def _deploy(target):
-    _prepare_deploy()
-
     label = datetime.now().strftime("%Y-%m-%d_%H.%M.%S")
     version = target.make_version(label)
 
-    _copy_local_sources(target, version)
+    _update_project_sources(target, version)
     _update_virtualenv(version)
     _build_static(version)
 
@@ -342,20 +335,13 @@ def _clean(target):
             run("rm -rf %s" % d)
 
 
-def deploy_staging(quick=False):
-    _deploy(STAGING, quick=quick)
+def deploy_staging():
+    _deploy(STAGING)
 
 
-def deploy_production(quick=False):
-    with lcd(this_dir):
-        if local("hg st", capture=True).strip() != "":
-            if not console.confirm("Project dir is not clean, merge to live will fail. Continue anyway?", default=False):
-                sys.exit()
+def deploy_production():
+    _deploy(PRODUCTION)
 
-    _deploy(PRODUCTION, quick=quick)
-    #  Update 'live' branch so that we can switch to it easily if needed.
-    with lcd(this_dir):
-        local('hg update -r live && hg merge -r default && hg commit -m "Merged from default" && hg update -r default', capture=False)
 
 def stop_apache_production():
     _stop_apache(PRODUCTION)
