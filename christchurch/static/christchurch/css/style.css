@@ -281,6 +281,10 @@ h1.homepage {
     vertical-align: top;
 }
 
+.programme td:first-child {
+    width: 25%;
+}
+
 .programme tr {
     border-top: 1px solid #660033;
 
@@ -299,13 +303,13 @@ td h3 {
     padding-top: 0;
 }
 
-.imgfloatright {
+img.right {
     float: right;
     margin-left: 5px;
     margin-bottom: 5px;
 }
 
-.imgfloatleft {
+img.left {
     float: left;
     margin-right: 5px;
     margin-bottom: 5px;
