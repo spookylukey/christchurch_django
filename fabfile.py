@@ -248,10 +248,9 @@ def _build_static(version):
             # django-cms requires appmedia, which overlaps a lot with Django's
             # own 'statcifiles', but with different conventions (appmedia looks
             # for 'media' directories and copies to MEDIA_ROOT, Django looks for
-            # 'static' and copies to STATIC_ROOT).  The easiest way to hack it
-            # is to create a symlink 'static' pointing to 'media' for the cms
-            # app. TODO!
+            # 'static' and copies to STATIC_ROOT).
             run_venv("./manage.py collectstatic -v 0 --noinput")
+            run_venv("./manage.py symlinkmedia")
 
     run("chmod -R ugo+r %s" % version.static_dir)
 
