@@ -1,0 +1,53 @@
+{% load cms_tags %}
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>{{ request.current_page.get_title }} :: Christ Church, Bradford</title>
+  <meta name="keywords" content="Christ church, Bradford, church, evangelical, reformed, christchurch, Yorkshire, UK, Pollard Park">
+  <link rel="StyleSheet" href="/static/christchurch/css/style.css" type="text/css">
+  {% plugins_media %}
+
+</head>
+
+
+<body>
+  <div id="headercont">
+    <div id="header">
+      <div id="headertext">Christ Church, Bradford</div>
+      <div id="headeraddress">2 - 4 Leyton Drive, Off Ley Fleaks Road, Bradford, BD10 8RQ</div>
+      <div id="headerformerly">(Formerly: Pollard Park Evangelical Church)</div>
+    </div>
+  </div>
+  <div id="navbarcont">
+    <ul id="navbar">
+      <li><a href="/">Home</a></li>
+      <li><a href="/sunday/">Sunday</a></li>
+      <li><a href="/events/">Events</a></li>
+      <li><a href="/sermons/">Sermons</a></li>
+      <li><a href="/people/">People</a></li>
+      <li><a href="/directions/">Directions</a></li>
+      <li><a href="/teachings/">Teachings</a></li>
+      <li><a href="/contactus/">Contact us</a></li>
+    </ul>
+  </div>
+  <div id="bodycont">
+    <div id="body">
+      <div id="bodyinner">
+	{% block content %}
+          {% placeholder "main" %}
+        {% endblock %}
+      </div>
+    </div>
+    <div id="footer">
+      <div id="footerinner">
+	<a href="/">Home</a>
+	| <a href="/sitemap/">Site map</a>
+	| <a href="/contactus/">Contact us</a>
+      </div>
+    </div>
+  </div>
+</body>
+
+<body>
+</body>
+</html>

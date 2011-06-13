@@ -46,6 +46,9 @@ MANAGERS = ADMINS
 
 TIME_ZONE = "Europe/London"
 
+LANGUAGES = [('en', 'en')]
+DEFAULT_LANGUAGE = 0
+
 LANGUAGE_CODE = 'en-gb'
 
 SITE_ID = 1
@@ -84,6 +87,18 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'cms.middleware.page.CurrentPageMiddleware',
+    'cms.middleware.user.CurrentUserMiddleware',
+    'cms.middleware.toolbar.ToolbarMiddleware',
+    'cms.middleware.media.PlaceholderMediaMiddleware',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.auth',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.request',
+    'django.core.context_processors.media',
+    'cms.context_processors.media',
 )
 
 ROOT_URLCONF = 'christchurch.urls'
@@ -98,6 +113,21 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'south',
     'christchurch',
+    'cms',
+    'menus',
+    'mptt',
+    'appmedia',
+    'south',
+    'cms.plugins.text',
+    'cms.plugins.picture',
+    'cms.plugins.link',
+    'cms.plugins.file',
+    'cms.plugins.snippet',
+    'cms.plugins.googlemap',
+)
+
+CMS_TEMPLATES = (
+    ('standard.html', 'Standard Template'),
 )
 
 LOGGING = {

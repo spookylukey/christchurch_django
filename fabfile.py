@@ -245,7 +245,13 @@ def _build_static(version):
 
     with virtualenv(version.venv_dir):
         with cd(version.project_dir):
-            run_venv("./manage.py collectstatic -v 0 --settings=christchurch.settings --noinput")
+            # django-cms requires appmedia, which overlaps a lot with Django's
+            # own 'statcifiles', but with different conventions (appmedia looks
+            # for 'media' directories and copies to MEDIA_ROOT, Django looks for
+            # 'static' and copies to STATIC_ROOT).  The easiest way to hack it
+            # is to create a symlink 'static' pointing to 'media' for the cms
+            # app. TODO!
+            run_venv("./manage.py collectstatic -v 0 --noinput")
 
     run("chmod -R ugo+r %s" % version.static_dir)
 
@@ -253,8 +259,8 @@ def _build_static(version):
 def _update_db(target, version):
     with virtualenv(version.venv_dir):
         with cd(version.project_dir):
-            run_venv("./manage.py syncdb --settings=christchurch.settings")
-            run_venv("./manage.py migrate --all --settings=christchurch.settings")
+            run_venv("./manage.py syncdb")
+            run_venv("./manage.py migrate --all")
 
 
 def _deploy(target):

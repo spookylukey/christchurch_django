@@ -1,17 +1,26 @@
 from django.conf.urls.defaults import patterns, include, url
-
-# Uncomment the next two lines to enable the admin:
 from django.contrib import admin
+from django.conf import settings
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'christchurch.views.home', name='home'),
-    # url(r'^christchurch/', include('christchurch.foo.urls')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^', include('cms.urls')),
 )
+
+if settings.DEVBOX:
+    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+    # appmedia
+    urlpatterns += patterns('',
+                           (r'^' + settings.MEDIA_URL.lstrip('/'), include('appmedia.urls')),
+    )
+
+    # staticfiles and usermedia
+
+    urlpatterns += patterns('',
+                            (r'^usermedia/(?P<path>.*)$', 'django.views.static.serve',
+                             {'document_root': settings.MEDIA_ROOT}),
+    )
+
+    urlpatterns += staticfiles_urlpatterns()
