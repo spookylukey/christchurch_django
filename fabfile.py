@@ -35,7 +35,7 @@ import sys
 #    - for the django project app
 #    - for the static app
 #
-# settings_local.py and settings.py controls these things.
+# settings_priv.py and settings.py controls these things.
 #
 # In each target, we aim for atomic switching from one version to the next.
 # This is not quite possible, but as much as possible the different versions
@@ -50,9 +50,6 @@ import sys
 #       src-2010-10-11_07-20-34/
 #          env/                    # virtualenv dir
 #          project/                # uploaded from local
-#          deps/
-#            django/
-#            django-mailer/        # etc
 #          static/                 # built once uploaded
 #       current/                   # symlink to src-???
 
@@ -78,37 +75,28 @@ import sys
 # === Bootstrapping ===
 #
 # Steps needed on a new server:
-# - create 'Django' app on webfaction.
+# - create Django app on webfaction.
 # - create static app on webfaction
 # - create usermedia app on webfaction
+# - create database on webfaction
 #
-# - create the basic project layout
-#   with 'src1' for sources and 'current' symlink
-# - create a virtualenv
-# - remove old stuff
-#   - lib dir
-#   - myproject
-# - rename myproject.wsgi to project.wsgi
-#   - replace 'myproject' with 'christchurch'
-# - fix Apache config
-#   - project.wsgi instead of myproject
-#   - no need for path mangling
-# - fix apache start/stop commands to activate the virtualenv
-
+# # Make layout and modify various things:
 # $ cd ~/webapps/christchurch_django/
 # $ mkdir src
 # $ mkdir db
 # $ mv myproject.wsgi project.wsgi
 # $ replace myproject christchurch -- project.wsgi
-# $ rm -rf myproject/
-# $ rm -rf lib/
+# $ rm -rf myproject/ lib/
+# $ emacs apache/conf/http.conf
+# - Remove python path
+# - Change myproject -> project
 # $ emacs apache/bin/start
-# # Add:
-# . $HOME/webapps/christchurch_django/src/current/env/bin/activate
+# - Add:
+#   . $HOME/webapps/christchurch_django/src/current/env/bin/activate
 
 # Then deploy using this fabfile
 
-# Then create webfaction app for static media
+# Then create webfaction symlink app for static media
 
 # Same again for christchurch_django_staging, with a different
 # webapp dir and venv dir.
@@ -260,28 +248,6 @@ def _build_static(version):
             run_venv("./manage.py collectstatic -v 0 --settings=christchurch.settings --noinput")
 
     run("chmod -R ugo+r %s" % version.static_dir)
-
-
-def _is_south_installed(target):
-    cmd = """psql -d %s -U %s -h localhost -c "select tablename from pg_catalog.pg_tables where tablename='south_migrationhistory';" """ % (target.dbname, target.dbname)
-    out = run(cmd)
-    if 'south_migrationhistory' not in out:
-        return False
-
-    cmd2 = """psql -d %s -U %s -h localhost -c "select migration from south_migrationhistory where migration='0001_initial';" """ % (target.dbname, target.dbname)
-    out2 = run(cmd2)
-    if '0001_initial' not in out2:
-        return False
-
-    return True
-
-
-def _install_south(target, version):
-    # A one time task to be run after South has been first added
-    with virtualenv(version.venv_dir):
-        with cd(version.project_dir):
-            run_venv("./manage.py syncdb --settings=christchurch.settings")
-            run_venv("./manage.py migrate --all 0001 --fake --settings=christchurch.settings")
 
 
 def _update_db(target, version):
