@@ -367,13 +367,13 @@ img.left {
 /* single widths */
 
 
-.column h2, .column h3
+.row h2, .row h3
 {
     padding-top: 0.1em;
     margin-left: 0;
 }
 
-.column h2
+.row h2
 {
     border-bottom: 1px solid #888;
 }
