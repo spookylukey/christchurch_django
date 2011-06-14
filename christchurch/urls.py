@@ -5,8 +5,10 @@ from django.conf import settings
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^', include('cms.urls')),
+                       url(r'^thissunday/', 'christchurch.views.this_sunday'),
+                       url(r'^admin/', include(admin.site.urls)),
+                       url(r'^', include('cms.urls')),
+                       # Sermons views included via apphooks
 )
 
 if settings.DEVBOX:

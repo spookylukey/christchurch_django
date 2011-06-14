@@ -1,0 +1,13 @@
+{% extends "christchurch/iframe.html" %}
+{% block content %}
+{% if message %}
+  {{ message }}
+{% else %}
+  {% for event in events %}
+    {% ifchanged event.start.date %}
+      <h2>{{ event.start|date:"F j, Y" }}</h2>
+    {% endifchanged %}
+  <p><b>{{ event.nice_time }}:</b> {{ event.speaker }}</p>
+  {% endfor %}
+{% endif %}
+{% endblock %}
