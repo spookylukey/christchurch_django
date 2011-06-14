@@ -358,8 +358,14 @@ def upload_usermedia():
     local("rsync -z -r %s/ cciw@christchurchbradford.org.uk:%s" % (usermedia_local, usermedia_production), capture=False)
 
 
+def upload_sermons():
+    local("chmod ugo+r  %s/downloads/sermons/*" % usermedia_local)
+    local("rsync -v --progress --size-only %s/downloads/sermons/* cciw@christchurchbradford.org.uk:%s/downloads/sermons" % (usermedia_local, usermedia_production))
+
+
 def backup_usermedia():
     local("rsync -z -r  cciw@christchurchbradford.org.uk:%s/ %s" % (usermedia_production, usermedia_local), capture=False)
+
 
 
 # TODO:
