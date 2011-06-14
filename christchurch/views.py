@@ -32,9 +32,11 @@ class Event(object):
         self.vevent = vevent # for debugging
 
     def nice_time(self):
-        if self.start.hour < 11:
+        if not hasattr(self.start, 'time'):
+            return ''
+        if self.start.time().hour < 11:
             return "Morning"
-        elif self.start.hour >= 17:
+        elif self.start.time().hour >= 17:
             return "Evening"
         else:
             return "Afternoon"
@@ -65,7 +67,7 @@ def this_sunday(request):
             # not part way through, so truncate hour to zero
             today = datetime.now(local_timezone).replace(hour=0)
             if d > today and d < today + timedelta(7):
-                events.append(Event(d, vevent.summary.value))
+                events.append(Event(vevent.summary.value, d))
         events.sort()
         c['events'] = events
     else:
