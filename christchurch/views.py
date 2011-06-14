@@ -42,7 +42,6 @@ def this_sunday(request):
     try:
         cal = get_calendar(PREACHING_ICAL)
     except Exception:
-        raise
         cal = None
 
     c = {}
