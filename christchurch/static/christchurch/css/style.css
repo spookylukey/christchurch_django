@@ -140,6 +140,14 @@ body {
 
 }
 
+#headertext a:link,
+#headertext a:visited,
+#headertext a:hover
+{
+    color: white;
+    text-decoration: none;
+}
+
 #headeraddress {
     margin-top: 3px;
     text-align: center;
@@ -221,7 +229,8 @@ h3 { font-size: 1.0em; }
     text-decoration: none;
 }
 
-#navbarcont ul li.here a {
+#navbarcont ul li.ancestor a,
+#navbarcont ul li.selected a {
     background-color: #660033;
     color: #fff;
     border-top: 1px solid #660033;
@@ -350,4 +359,13 @@ img.left {
     float: right;
     margin-bottom: 20px;
     margin-left: 5px;
+}
+
+/* Section anchors */
+.anchor:link, .anchor:visited {
+ border: none;
+ color: #888;
+ font-size: .8em;
+ vertical-align: text-top;
+ text-decoration: none;
 }

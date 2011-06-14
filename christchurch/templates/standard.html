@@ -1,4 +1,4 @@
-{% load cms_tags %}<!DOCTYPE html>
+{% load cms_tags %}{% load menu_tags %}<!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -13,21 +13,14 @@
 <body>
   <div id="headercont">
     <div id="header">
-      <div id="headertext">Christ Church, Bradford</div>
+      <div id="headertext"><a href="/">Christ Church, Bradford</a></div>
       <div id="headeraddress">2 - 4 Leyton Drive, Off Ley Fleaks Road, Bradford, BD10 8RQ</div>
       <div id="headerformerly">(Formerly: Pollard Park Evangelical Church)</div>
     </div>
   </div>
   <div id="navbarcont">
     <ul id="navbar">
-      <li><a href="/">Home</a></li>
-      <li><a href="/sunday/">Sunday</a></li>
-      <li><a href="/events/">Events</a></li>
-      <li><a href="/sermons/">Sermons</a></li>
-      <li><a href="/people/">People</a></li>
-      <li><a href="/directions/">Directions</a></li>
-      <li><a href="/teachings/">Teachings</a></li>
-      <li><a href="/contactus/">Contact us</a></li>
+      {% show_menu %}
     </ul>
   </div>
   <div id="bodycont">
@@ -41,8 +34,7 @@
     <div id="footer">
       <div id="footerinner">
 	<a href="/">Home</a>
-	| <a href="/sitemap/">Site map</a>
-	| <a href="/contactus/">Contact us</a>
+	| <a href="{% page_url "contactus" %}">Contact us</a>
       </div>
     </div>
   </div>
