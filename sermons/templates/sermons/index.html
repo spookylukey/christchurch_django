@@ -1,0 +1,12 @@
+{% extends "standard.html" %}
+{% block content %}
+{{ block.super }}
+{% for sermon in sermons %}
+  {% ifchanged sermon.date_preached %}
+  <h2>{{ sermon.date_preached|date:"F j, Y" }}</h2>
+  {% endifchanged %}
+  <p><a href="{{ sermon.url }}">{{ sermon.nice_time }} - {{ sermon.speaker }}
+      {% if sermon.title %} - {{ sermon.title }}{% endif %}</a></p>
+{% endfor %}
+{{ test }}
+{% endblock %}

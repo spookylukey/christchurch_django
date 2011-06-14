@@ -113,6 +113,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'south',
     'christchurch',
+    'sermons',
     'cms',
     'menus',
     'mptt',
