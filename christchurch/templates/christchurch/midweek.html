@@ -7,7 +7,10 @@
     {% ifchanged event.start.date %}
       <h2>{{ event.start|date:"F j, Y" }}</h2>
     {% endifchanged %}
-  <p><b>{{ event.nice_time }}:</b> {{ event.summary }}</p>
+  <p><b>{{ event.summary }}:</b><br/>
+    Location: {% if event.location %}{{ event.location }}{% else %}Unknown{% endif %}<br/>
+    {% if event.description %}More information: {{ event.description }}<br/>{% endif %}
+  </p>
   {% endfor %}
 {% endif %}
 {% endblock %}
