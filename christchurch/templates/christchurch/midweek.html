@@ -1,7 +1,7 @@
 {% extends "christchurch/iframe.html" %}
 {% block content %}
 {% if message %}
-  {{ message }}
+  <p><i>{{ message }}</i></p>
 {% else %}
   {% for event in events %}
     {% ifchanged event.start.date %}
