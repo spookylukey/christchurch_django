@@ -230,8 +230,8 @@ body.iframecontent .iframeinner
     margin-bottom: 0;
 }
 
-#navbarcont ul li { 
-    display: inline; 
+#navbarcont ul li {
+    display: inline;
     list-style-type: none;
     margin: 0;
 }
@@ -338,29 +338,6 @@ img.left {
     margin-bottom: 5px;
 }
 
-.col1, col2 {
-    width: 40%;
-    float: left;
-}
-.col2 {
-    margin-left: 50%;
-}
-
-.columns h2, .columns h3
-{
-    padding-top: 0.1em;
-    margin-left: 0;
-}
-
-.columns h2
-{
-    border-bottom: 1px solid #888;
-}
-
-.columns {
-    clear: both;
-}
-
 #photochanger {
     width: 450px;
     height: 200px;
@@ -383,3 +360,63 @@ img.left {
  vertical-align: text-top;
  text-decoration: none;
 }
+
+
+/* column widths */
+
+/* single widths */
+
+
+.column h2, .column h3
+{
+    padding-top: 0.1em;
+    margin-left: 0;
+}
+
+.column h2
+{
+    border-bottom: 1px solid #888;
+}
+
+.columns1 .column,
+.column .columns1 .column   { width: 100%;}
+
+.columns2 .column,
+.column .columns2 .column   {width: 48.5%;}
+
+.columns3 .column,
+.column .columns3 .column   {width: 31.4%; }
+
+.columns4 .column,
+.column .columns4 .column   {width: 22.85%;}
+
+.columns5 .column,
+.column .columns5 .column   {width: 17.72%;}
+
+.columns6 .column,
+.column .columns6 .column   {width: 14.23%;}
+
+/* all rows float left except the last, which floats right
+all rows have a left margin except the first, which has none */
+
+.row .column    {
+    float: left;
+    margin-left: 2.8%;
+    }
+
+.row {
+    clear: both; /* no nested columns, so this is fine */
+}
+
+
+div.column.firstcolumn,
+li.column.firstcolumn   {
+    margin-left: 0;
+    }
+
+div.column.lastcolumn,
+li.column.lastcolumn    {
+    float: right;
+    clear: right;
+    margin-left: 0 !important;
+    }

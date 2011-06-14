@@ -7,6 +7,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
                        url(r'^thissunday/$', 'christchurch.views.this_sunday'),
                        url(r'^upcoming-midweek/$', 'christchurch.views.upcoming_midweek'),
+                       url(r'^semantic/', include('semanticeditor.urls')),
                        url(r'^admin/', include(admin.site.urls)),
                        url(r'^', include('cms.urls')),
                        # Sermons views included via apphooks

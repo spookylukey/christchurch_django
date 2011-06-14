@@ -126,6 +126,7 @@ INSTALLED_APPS = (
     'cms.plugins.file',
     'cms.plugins.snippet',
     'cms.plugins.googlemap',
+    'semanticeditor',
 )
 
 CMS_TEMPLATES = (
@@ -169,3 +170,6 @@ else:
     from .settings_priv import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD
 
     SEND_BROKEN_LINK_EMAILS = False
+
+
+SEMANTICEDITOR_MEDIA_URL = os.path.join(STATIC_URL, "semanticeditor/")
