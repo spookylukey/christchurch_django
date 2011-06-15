@@ -3,8 +3,8 @@ from dateutil import rrule
 
 def search(calendar, start_date, end_date):
     """
-    Searches a vobject calendar for events between the specified datetime objects,
-    hanlding recurring events as necessary.
+    Searches a vobject calendar for events starting between the specified
+    datetime objects, hanlding recurring events as necessary.
 
     Returns a list of 2 tuples containing (datetime/date of event, vevent object)
     """

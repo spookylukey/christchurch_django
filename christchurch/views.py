@@ -67,14 +67,12 @@ def this_sunday(request):
 
     c = {}
     if cal is not None:
-        events = []
-        for vevent in cal.vevent_list:
-            d = vevent.dtstart.value.astimezone(local_timezone)
-            # Clock should 'tick over' to the next week at the end of Sunday,
-            # not part way through, so truncate hour to zero
-            today = datetime.now(local_timezone).replace(hour=0)
-            if d > today and d < today + timedelta(7):
-                events.append(Event(vevent.summary.value, d))
+        # Clock should 'tick over' to the next week at the end of Sunday,
+        # not part way through, so truncate hour to zero.
+        today = datetime.now(local_timezone).replace(hour=0)
+        raw_events = search(cal, today, today + timedelta(7))
+        events = [Event(vevent.summary.value, dt)
+                  for (dt, vevent) in raw_events]
         events.sort()
         c['events'] = events
     else:
