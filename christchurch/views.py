@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from dateutil import tz, rrule
 import os
 import os.path
 import random
@@ -13,6 +12,7 @@ import pytz
 import requests
 import vobject
 
+from .calendar import search
 
 PREACHING_ICAL = 'http://www.google.com/calendar/ical/c3kc8arf6hr51dh146dnsiq040%40group.calendar.google.com/public/basic.ics'
 
@@ -92,66 +92,19 @@ def upcoming_midweek(request):
     c = {}
     if cal is not None:
         today = datetime.now(local_timezone).replace(hour=0)
-        events = search(cal, today, today + timedelta(60))
+        raw_events = search(cal, today, today + timedelta(60))
+        events = [Event(v.summary.value if hasattr(v, 'summary') else '',
+                        startdate,
+                        location=v.location.value if hasattr(v, 'location') else None,
+                        description=v.description.value if hasattr(v, 'description') else None,
+                        vevent=v,
+                        ) for (startdate, v) in raw_events]
+        events.sort()
         c['events'] = events
     else:
         c['message'] = "Calendar not available"
 
     return render(request, "christchurch/midweek.html", c)
-
-
-def search(calendar, start_date, end_date):
-    """
-    Returns a list of events in calendar betweem the specified datetime objects,
-    creating recurring events as necessary.
-    """
-    # First, do a pre run to get all the dates we nned to exclude,
-    # i.e. those that have specific instances, identified by recurrence-id
-
-    exclusions = []
-    for v in calendar.vevent_list:
-        rc = v.contents.get('recurrence-id', None)
-        if rc is not None:
-            # rc is a list, don't know if it can ever contain more than one
-            # item, but we'll deal with that anyway.
-            for d in rc:
-                exclusions.append(d.value)
-
-    events = []
-    def mk_event(v, startdate):
-        return Event(v.summary.value if hasattr(v, 'summary') else '',
-                     startdate,
-                     location=v.location.value if hasattr(v, 'location') else None,
-                     description=v.description.value if hasattr(v, 'description') else None,
-                     vevent=v,
-                     )
-
-    for v in calendar.vevent_list:
-        if not hasattr(v, 'rrule'):
-            # No recurrence, just look at dtstart
-            dt = v.dtstart.value
-            if not hasattr(dt, 'date'):
-                # A 'date', not 'datetime'
-                if dt >= start_date.date() and dt <= end_date.date():
-                    events.append(mk_event(v, dt))
-            else:
-                if dt >= start_date and dt <= end_date:
-                    events.append(mk_event(v, dt))
-        else:
-            ruleset = rrule.rruleset()
-            rule = rrule.rrulestr(v.rrule.value, dtstart=v.dtstart.value)
-            ruleset.rrule(rule)
-            if hasattr(v, 'exdate_list'):
-                for l in v.exdate_list:
-                    for d in l.value:
-                        ruleset.exdate(d)
-            for d in exclusions:
-                ruleset.exdate(d)
-            events.extend([mk_event(v, ev_date)
-                           for ev_date in ruleset.between(start_date, end_date)])
-
-    events.sort()
-    return events
 
 
 # Photo cycler for front page.
