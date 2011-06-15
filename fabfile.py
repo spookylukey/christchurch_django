@@ -355,7 +355,8 @@ def test_production():
 
 
 def upload_usermedia():
-    local("rsync -z -r %s/ cciw@christchurchbradford.org.uk:%s" % (usermedia_local, usermedia_production), capture=False)
+    local("chmod ugo+r  -R %s/*" % usermedia_local)
+    local("rsync -z -r --exclude='*.mp3' %s/ cciw@christchurchbradford.org.uk:%s" % (usermedia_local, usermedia_production), capture=False)
 
 
 def upload_sermons():
