@@ -5,6 +5,7 @@ from django.conf import settings
 admin.autodiscover()
 
 urlpatterns = patterns('',
+                       url(r'^photochanger/$', 'christchurch.views.photochanger'),
                        url(r'^thissunday/$', 'christchurch.views.this_sunday'),
                        url(r'^upcoming-midweek/$', 'christchurch.views.upcoming_midweek'),
                        url(r'^semantic/', include('semanticeditor.urls')),

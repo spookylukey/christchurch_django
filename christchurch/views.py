@@ -1,9 +1,15 @@
 from datetime import datetime, timedelta
 from dateutil import tz, rrule
+import os
+import os.path
 import pytz
+import random
 import re
 
+from django.conf import settings
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.utils.cache import patch_cache_control, add_never_cache_headers
 import requests
 import vobject
 
@@ -145,3 +151,24 @@ def search(calendar, start_date, end_date):
 
     events.sort()
     return events
+
+
+def photochanger(request):
+    """
+    Returns a redirect to a random photo in the slideshow
+    """
+    slideshow_dir = 'photos/slideshow'
+    files = os.listdir(os.path.join(settings.MEDIA_ROOT, slideshow_dir))
+    files = [f for f in files if f.endswith('.jpg')]
+
+    choice = random.choice(files)
+    print choice
+    response = HttpResponseRedirect(os.path.join(settings.MEDIA_URL, slideshow_dir,
+                                                 choice))
+
+    # We want the visitor to get different photos each time,
+    # so we say "No really, don't cache this"
+    add_never_cache_headers(response)
+    patch_cache_control(response, no_cache=True)
+    patch_cache_control(response, must_revalidate=True)
+    return response
