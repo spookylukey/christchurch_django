@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from dateutil import tz, rrule
 import os
 import os.path
-import pytz
 import random
 import re
 
@@ -10,6 +9,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.cache import patch_cache_control, add_never_cache_headers
+import pytz
 import requests
 import vobject
 
@@ -17,7 +17,7 @@ import vobject
 PREACHING_ICAL = 'http://www.google.com/calendar/ical/c3kc8arf6hr51dh146dnsiq040%40group.calendar.google.com/public/basic.ics'
 
 MIDWEEK_ICAL = 'https://www.google.com/calendar/ical/rd8ant2lkdackckjk587kfr68g%40group.calendar.google.com/public/basic.ics'
-# Some bad data like this
+
 bad_dates = re.compile(r'CREATED:0000\d{4}T\d*Z\r\n')
 
 local_timezone = pytz.timezone('Europe/London')
@@ -25,6 +25,7 @@ local_timezone = pytz.timezone('Europe/London')
 
 def get_calendar(url):
     data = requests.get(url).content
+    # There is some bad CREATED data that vobject barfs on if we don't clean up.
     data = bad_dates.sub('', data)
     return vobject.readOne(data)
 
