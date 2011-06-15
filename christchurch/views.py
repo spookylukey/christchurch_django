@@ -162,7 +162,6 @@ def photochanger(request):
     files = [f for f in files if f.endswith('.jpg')]
 
     choice = random.choice(files)
-    print choice
     response = HttpResponseRedirect(os.path.join(settings.MEDIA_URL, slideshow_dir,
                                                  choice))
 
