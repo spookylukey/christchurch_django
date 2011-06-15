@@ -153,6 +153,57 @@ def search(calendar, start_date, end_date):
     return events
 
 
+# Photo cycler for front page.
+# Getting it perfect is harder than it seems!
+#
+# == Constraints ==
+#
+# - we want users to get a set of random photos, which are cycled by javascript.
+#
+# - they should get a different set each visit
+#
+# - if javascript is turned off, only one image should be loaded, since only one
+#   will be seen (and if CSS is missing, we don't want a bunch of photos
+#   showing)
+#
+# - if the set of photos is to be fully random, then the first one must be, and
+#   this one has to be random by a method that doesn't rely on javascript.
+#
+# - we don't want to make a custom view for the whole page i.e. want to be able
+#   to do this just by including a snippet of HTML on the home page.
+#
+# - ideally we don't want to use an iframe, because that will delay the
+#   appearance of the photo (requires an extra, serial HTTP request).
+#
+# - we want to avoid repeats within the set, especially repeating the same photo
+#   twice in a row, which looks bad.
+#
+# - don't want to store anything in db, and don't have shared cache available
+#
+# - can't rely on per-process state in web server, because it can be
+#   multi-process
+#
+# - to add new images, we want to just add them to the relevant directory,
+#   so need some server-side code that will look in this dir.
+#
+# == Solution ==
+#
+# - initial image is hardcoded to src='/photochanger/'
+#
+# - this view:
+#
+#   - selects a set of photos at random, with no repeats.
+#
+#   - returns a redirect to the first one
+#
+#   - with a cookie that indicates the rest
+#
+#   - client side javascript can read the cookie
+#     and do the rest.
+#
+#   - response is marked 'never cache' so they
+#     get different one next time.
+
 def photochanger(request):
     """
     Returns a redirect to a random photo in the slideshow
@@ -161,9 +212,17 @@ def photochanger(request):
     files = os.listdir(os.path.join(settings.MEDIA_ROOT, slideshow_dir))
     files = [f for f in files if f.endswith('.jpg')]
 
-    choice = random.choice(files)
+    chosen = []
+    for i in range(0, 5):
+        choice = random.choice(files)
+        files.remove(choice)
+        chosen.append(choice)
+
     response = HttpResponseRedirect(os.path.join(settings.MEDIA_URL, slideshow_dir,
-                                                 choice))
+                                                 chosen[0]))
+
+    # filenames are short, so can store in a cookie
+    response.set_cookie('photocycler', '|'.join(chosen[1:]))
 
     # We want the visitor to get different photos each time,
     # so we say "No really, don't cache this"
