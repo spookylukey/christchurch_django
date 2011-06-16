@@ -14,12 +14,10 @@ import vobject
 
 from .calendar import search
 
+
 PREACHING_ICAL = 'http://www.google.com/calendar/ical/c3kc8arf6hr51dh146dnsiq040%40group.calendar.google.com/public/basic.ics'
-
 MIDWEEK_ICAL = 'https://www.google.com/calendar/ical/rd8ant2lkdackckjk587kfr68g%40group.calendar.google.com/public/basic.ics'
-
 bad_dates = re.compile(r'CREATED:0000\d{4}T\d*Z\r\n')
-
 local_timezone = pytz.timezone('Europe/London')
 
 
@@ -58,6 +56,7 @@ class Event(object):
 
     def __repr__(self):
         return '<Event: %s, %s, location=%s, description=%s>' % (self.summary, self.start, self.location, self.description)
+
 
 def this_sunday(request):
     try:
