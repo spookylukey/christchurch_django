@@ -62,7 +62,7 @@ STATIC_ROOT = os.path.join(parentdir, 'static')
 if DEVBOX:
     MEDIA_ROOT = os.path.join(parentdir, 'usermedia')
 else:
-    from .settings_priv import MEDIA_ROOT
+    from .settings_priv import MEDIA_ROOT, GOOGLE_ANALYTICS_ACCOUNT
 
 MEDIA_URL = '/usermedia/'
 STATIC_URL = '/static/'
@@ -100,6 +100,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'cms.context_processors.media',
+    'christchurch.processors.common',
 )
 
 ROOT_URLCONF = 'christchurch.urls'
