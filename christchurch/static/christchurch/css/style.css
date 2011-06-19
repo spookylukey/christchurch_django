@@ -420,3 +420,7 @@ li.column.lastcolumn    {
     clear: right;
     margin-left: 0 !important;
     }
+
+.pagination {
+    text-align: right;
+}

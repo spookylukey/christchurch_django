@@ -9,4 +9,4 @@ requests
 python-dateutil==1.4.1
 pytz>=2010b
 semanticeditor==0.2.1
-
+django-pagination

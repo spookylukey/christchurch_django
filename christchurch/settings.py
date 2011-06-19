@@ -91,6 +91,7 @@ MIDDLEWARE_CLASSES = [
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',
     'cms.middleware.media.PlaceholderMediaMiddleware',
+    'pagination.middleware.PaginationMiddleware',
 ]
 
 TEMPLATE_CONTEXT_PROCESSORS = [
@@ -128,6 +129,7 @@ INSTALLED_APPS = [
     'cms.plugins.snippet',
     'cms.plugins.googlemap',
     'semanticeditor',
+    'pagination',
 ]
 
 CMS_TEMPLATES = (
