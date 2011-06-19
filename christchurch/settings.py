@@ -80,7 +80,7 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
     'django.middleware.transaction.TransactionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -91,9 +91,9 @@ MIDDLEWARE_CLASSES = (
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',
     'cms.middleware.media.PlaceholderMediaMiddleware',
-)
+]
 
-TEMPLATE_CONTEXT_PROCESSORS = (
+TEMPLATE_CONTEXT_PROCESSORS = [
     'django.core.context_processors.auth',
     'django.core.context_processors.i18n',
     'django.core.context_processors.request',
@@ -101,11 +101,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
     'cms.context_processors.media',
     'christchurch.processors.common',
-)
+]
 
 ROOT_URLCONF = 'christchurch.urls'
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -128,7 +128,7 @@ INSTALLED_APPS = (
     'cms.plugins.snippet',
     'cms.plugins.googlemap',
     'semanticeditor',
-)
+]
 
 CMS_TEMPLATES = (
     ('standard.html', 'Standard Template'),
@@ -174,3 +174,14 @@ else:
 
 
 SEMANTICEDITOR_MEDIA_URL = os.path.join(STATIC_URL, "semanticeditor/")
+
+
+if DEBUG:
+    TEMPLATE_CONTEXT_PROCESSORS.append("django.core.context_processors.debug")
+    DEBUG_TOOLBAR_CONFIG = {
+        'INTERCEPT_REDIRECTS': False,
+    }
+    MIDDLEWARE_CLASSES.append("debug_toolbar.middleware.DebugToolbarMiddleware")
+
+    INTERNAL_IPS = ('127.0.0.1',)
+    INSTALLED_APPS.append("debug_toolbar")
