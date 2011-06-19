@@ -22,6 +22,7 @@ class Command(BaseCommand):
                 s.load_attrs_from_filename()
                 try:
                     s.full_clean()
+                    s.published = True
                     sermons.append(s)
                 except ValidationError as e:
                     errors.append("%s could not be imported due to missing/bad data for fields: %s" % (f, ','.join(e.message_dict.keys())))
