@@ -11,7 +11,7 @@
   {% ifchanged sermon.date_delivered %}
   <h2>{{ sermon.date_delivered|date:"F j, Y" }}</h2>
   {% endifchanged %}
-  <p>{{ sermon.nice_time }}: <a href="{{ sermon.url }}">{{ sermon.speaker }} {% if sermon.title %} - {{ sermon.title }}{% endif %}{% if sermon.nice_passage %} - {{ sermon.nice_passage }}{% endif %}</a></p>
+  <p>{{ sermon.nice_time }}: <a href="{{ sermon.sermon.url }}">{{ sermon.speaker }} {% if sermon.title %} - {{ sermon.title }}{% endif %}{% if sermon.nice_passage %} - {{ sermon.nice_passage }}{% endif %}</a></p>
 {% endfor %}
 
 {% paginate %}
