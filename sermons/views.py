@@ -1,11 +1,13 @@
 from django.conf import settings
 from django.shortcuts import render
-from django_easyfilters import FilterSet
+from django_easyfilters import FilterSet, FilterOptions
 
 from sermons.models import Sermon
 
 class SermonFilterSet(FilterSet):
-    fields = ['speaker']
+    fields = [
+        ('speaker', FilterOptions(order_by_count=True))
+        ]
 
 def index(request):
     sermons = Sermon.objects.filter(published=True)
