@@ -424,3 +424,12 @@ li.column.lastcolumn    {
 .pagination {
     text-align: right;
 }
+
+/* Filters */
+.filterline {
+    margin-bottom: 0.5em;
+}
+
+.filterline .filterlabel {
+    font-weight: bold;
+}
