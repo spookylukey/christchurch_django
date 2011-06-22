@@ -13,5 +13,5 @@ class SermonFilterSet(FilterSet):
 def index(request):
     sermons = Sermon.objects.filter(published=True)
     sermonsfilter = SermonFilterSet(sermons, request.GET)
-    return render(request, "sermons/index.html", {'sermonsfilter': sermonsfilter,
-                                                  'sermons': sermonsfilter.qs})
+    return render(request, "sermons/index.html", {'sermons': sermonsfilter.qs,
+                                                  'sermonsfilter': sermonsfilter})
