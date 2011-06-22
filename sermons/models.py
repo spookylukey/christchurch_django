@@ -4,8 +4,10 @@ import re
 
 from django.db import models
 
-BIBLE_BOOKS = ['Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy', 'Joshua', 'Judges', 'Ruth', '1 Samuel', '2 Samuel', '1 Kings', '2 Kings', '1 Chronicles', '2 Chronicles', 'Ezra', 'Nehemiah', 'Esther', 'Job', 'Psalm', 'Proverbs', 'Ecclesiastes', 'Song of Solomon', 'Isaiah', 'Jeremiah', 'Lamentations', 'Ezekiel', 'Daniel', 'Hosea', 'Joel', 'Amos', 'Obadiah', 'Jonah', 'Micah', 'Nahum', 'Habakkuk', 'Zephaniah', 'Haggai', 'Zechariah', 'Malachi', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', '1 Corinthians', '2 Corinthians', 'Galatians', 'Ephesians', 'Philippians', 'Colossians', '1 Thessalonians', '2 Thessalonians', '1 Timothy', '2 Timothy', 'Titus', 'Philemon', 'Hebrews', 'James', '1 Peter', '2 Peter', '1 John', '2 John', '3 John', 'Jude', 'Revelation']
-BIBLE_BOOKS_CHOICES = [('', '(Unspecified)')] + [(b,b) for b in BIBLE_BOOKS]
+BIBLE_BOOKS = ['Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy', 'Joshua', 'Judges', 'Ruth', '1 Samuel', '2 Samuel', '1 Kings', '2 Kings', '1 Chronicles', '2 Chronicles', 'Ezra', 'Nehemiah', 'Esther', 'Job', 'Psalms', 'Proverbs', 'Ecclesiastes', 'Song of Solomon', 'Isaiah', 'Jeremiah', 'Lamentations', 'Ezekiel', 'Daniel', 'Hosea', 'Joel', 'Amos', 'Obadiah', 'Jonah', 'Micah', 'Nahum', 'Habakkuk', 'Zephaniah', 'Haggai', 'Zechariah', 'Malachi', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', '1 Corinthians', '2 Corinthians', 'Galatians', 'Ephesians', 'Philippians', 'Colossians', '1 Thessalonians', '2 Thessalonians', '1 Timothy', '2 Timothy', 'Titus', 'Philemon', 'Hebrews', 'James', '1 Peter', '2 Peter', '1 John', '2 John', '3 John', 'Jude', 'Revelation']
+BIBLE_BOOKS_CHOICES = [('', '(Unspecified)')] + [(b.replace(' ',''), b) for b in BIBLE_BOOKS]
+# From book name to choice val:
+BIBLE_NAME_TO_VAL = dict([(b[1], b[0]) for b in BIBLE_BOOKS_CHOICES])
 SERMONS_PATH = 'downloads/sermons/'
 expected_filename_re = re.compile(ur'(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2}) (?P<hour>\d{2})(?P<minute>\d{2}) (?P<speaker>[^-]+)( - (?P<title>.*))?\.mp3')
 
@@ -104,7 +106,7 @@ class Sermon(models.Model):
                 # Assume 'title' is actually a passage
                 passage = title
                 title = ''
-                self.bible_book = book
+                self.bible_book = BIBLE_NAME_TO_VAL[book]
             elif ' - ' in title:
                 title_part, passage_part = title.split(' - ', 1)
 
@@ -117,7 +119,7 @@ class Sermon(models.Model):
                 if book is not None:
                     title = title_part
                     passage = passage_part
-                    self.bible_book = book
+                    self.bible_book = BIBLE_NAME_TO_VAL[book]
 
             self.title = title
             if passage is not None:
