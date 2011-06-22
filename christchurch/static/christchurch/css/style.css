@@ -433,3 +433,9 @@ li.column.lastcolumn    {
 .filterline .filterlabel {
     font-weight: bold;
 }
+
+.filterline {
+    margin-left: 1em;
+    text-indent: -1em;
+}
+
