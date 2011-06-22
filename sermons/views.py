@@ -6,7 +6,8 @@ from sermons.models import Sermon
 
 class SermonFilterSet(FilterSet):
     fields = [
-        ('speaker', FilterOptions(order_by_count=True))
+        ('speaker', FilterOptions(order_by_count=True)),
+        'bible_book',
         ]
 
 def index(request):
