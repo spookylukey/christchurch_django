@@ -439,3 +439,15 @@ li.column.lastcolumn    {
     text-indent: -1em;
 }
 
+.removefilter a:link,
+.removefilter a:visited {
+    text-decoration: none;
+    color: white;
+}
+
+.removefilter {
+    border-radius: 4px;
+    padding: 0px 1px 2px 3px;
+    background-color: #660033;
+    color: white;
+}
