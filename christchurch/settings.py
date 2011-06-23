@@ -20,9 +20,6 @@ WEBSERVER_RUNNING = 'mod_wsgi' in sys.argv
 if DEVBOX:
     DEBUG = True
     TEMPLATE_DEBUG = True
-    DEBUG_TOOLBAR_CONFIG = {
-        'INTERCEPT_REDIRECTS': False,
-    }
 else:
     DEBUG = False
     TEMPLATE_DEBUG = False
