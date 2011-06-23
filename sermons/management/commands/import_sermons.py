@@ -32,4 +32,8 @@ class Command(BaseCommand):
                 self.stderr.write(e + '\n')
         else:
             for s in sermons:
-                s.save()
+                if Sermon.objects.filter(date_delivered=s.date_delivered, time_delivered=s.time_delivered).exists():
+                    self.stderr.write("Skipping duplicate: %s\n" % s.sermon.url)
+                else:
+                    self.stdout.write("Importing sermon:   %s\n" % s.sermon.url)
+                    s.save()
