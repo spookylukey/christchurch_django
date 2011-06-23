@@ -7,6 +7,8 @@ from sermons.models import Sermon
 class SermonFilterSet(FilterSet):
     fields = [
         ('speaker', FilterOptions(order_by_count=True)),
+        'series',
+        'topics',
         'bible_book',
         ]
 
