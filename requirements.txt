@@ -11,3 +11,4 @@ pytz>=2010b
 semanticeditor==0.2.1
 django-pagination
 mutagen>=1.19
+-e hg+https://bitbucket.org/spookylukey/django-easyfilters/@8f44ebcac700#egg=django-easyfilters
