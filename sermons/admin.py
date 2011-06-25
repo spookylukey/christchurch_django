@@ -16,8 +16,8 @@ class SeriesAdmin(admin.ModelAdmin):
 
 
 class SermonAdmin(admin.ModelAdmin):
-    list_display = ['id', 'date_delivered', 'time_delivered', 'speaker', 'title', 'bible_book', 'passage', 'series', 'published']
-    list_editable = ['speaker', 'title', 'bible_book', 'passage', 'series']
+    list_display = ['date_delivered', 'time_delivered', 'speaker', 'title', 'bible_book', 'passage', 'series', 'published']
+    list_editable = ['title', 'bible_book', 'passage']
     list_filter = ['published', 'speaker', 'series']
     date_hierarchy = 'date_delivered'
     list_per_page = 200
