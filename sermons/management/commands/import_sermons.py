@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand
 
 from sermons.models import Sermon, SERMONS_PATH
+from sermons.tags import set_attrs_from_filename
 
 class Command(BaseCommand):
 
@@ -19,7 +20,7 @@ class Command(BaseCommand):
         for f in os.listdir(sermon_dir):
             if f.endswith('.mp3'):
                 s = Sermon(sermon=os.path.join(SERMONS_PATH, f))
-                s.load_attrs_from_filename()
+                set_attrs_from_filename(s)
                 try:
                     s.full_clean()
                     s.published = True

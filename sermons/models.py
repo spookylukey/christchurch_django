@@ -1,6 +1,4 @@
 from datetime import date, time
-import os
-import re
 
 from django.db import models
 
@@ -9,7 +7,6 @@ BIBLE_BOOKS_CHOICES = [('', '(Unspecified)')] + [(b.replace(' ',''), b) for b in
 # From book name to choice val:
 BIBLE_NAME_TO_VAL = dict([(b[1], b[0]) for b in BIBLE_BOOKS_CHOICES])
 SERMONS_PATH = 'downloads/sermons/'
-expected_filename_re = re.compile(ur'(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2}) (?P<hour>\d{2})(?P<minute>\d{2}) (?P<speaker>[^-]+)( - (?P<title>.*))?\.mp3')
 
 
 class Speaker(models.Model):
@@ -74,60 +71,6 @@ class Sermon(models.Model):
 
     def nice_passage(self):
         return self.passage if self.passage else self.bible_book
-
-    def load_attrs_from_filename(self):
-        """
-        Fills in the details that can be found from the filename
-        """
-
-        filename = os.path.basename(self.sermon.name)
-        m_filename = expected_filename_re.match(filename)
-
-        if m_filename is not None:
-            d = m_filename.groupdict()
-            self.date_delivered = date(int(d['year']), int(d['month']), int(d['day']))
-            self.time_delivered = time(int(d['hour']), int(d['minute']))
-            self.speaker = Speaker.objects.get_or_create(name=d['speaker'])[0]
-            passage = None
-            title = d['title']
-            if title is None:
-                title = ''
-
-            # Now see if we can parse title to get passage info
-            book = None
-            poss_book = title.split(' ')[0]
-            poss_book_2 = ' '.join(title.split(' ')[0:2])
-            if poss_book in BIBLE_BOOKS:
-                book = poss_book
-            if poss_book_2 in BIBLE_BOOKS:
-                book = poss_book_2
-
-            if book is not None:
-                # Assume 'title' is actually a passage
-                passage = title
-                title = ''
-                self.bible_book = BIBLE_NAME_TO_VAL[book]
-            elif ' - ' in title:
-                title_part, passage_part = title.split(' - ', 1)
-
-                poss_book = passage_part.split(' ')[0]
-                poss_book_2 = ' '.join(passage_part.split(' ')[0:2])
-                if poss_book in BIBLE_BOOKS:
-                    book = poss_book
-                if poss_book_2 in BIBLE_BOOKS:
-                    book = poss_book_2
-                if book is not None:
-                    title = title_part
-                    passage = passage_part
-                    self.bible_book = BIBLE_NAME_TO_VAL[book]
-
-            self.title = title
-            if passage is not None:
-                self.passage = passage
-            return True
-        else:
-            return False
-
 
     def __unicode__(self):
         return "%s - %s" % (self.speaker.name, self.title)
