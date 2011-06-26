@@ -12,6 +12,23 @@
            $('input[name="_save"]').hide();
        }
 
+       $('input[name="_continue"]').click(function(ev) {
+           var fname = $('#id_sermon').val();
+           // Get filename component, assuming '/' or '\' might be
+           // path separators.
+           fname = fname.split('\\').pop().split('/').pop();
+           var parts = fname.match(/^\d{4}-\d{2}-\d{2} \d{2}\d{2} .+ .+/);
+           if (parts == null) {
+               ev.preventDefault();
+               alert("The file name is not in the required format, please rename it. Thanks!");
+               return;
+           }
+
+           // Javascript's Date object is full of fail, so this is the best we
+           // can reasonably do, short of an AJAX call.
+
+       });
+
     });
 })(django.jQuery);
 </script>
