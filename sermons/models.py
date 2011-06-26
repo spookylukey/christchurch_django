@@ -42,7 +42,7 @@ class Series(models.Model):
 
 class SermonManager(models.Manager):
     def get_query_set(self, *args, **kwargs):
-        return super(SermonManager, self).get_query_set(*args, **kwargs).select_related('speaker')
+        return super(SermonManager, self).get_query_set(*args, **kwargs).select_related('speaker', 'series')
 
 
 class Sermon(models.Model):
