@@ -10,6 +10,8 @@ class SermonFilterSet(FilterSet):
         'series',
         'topics',
         'bible_book',
+        ('date_delivered', dict(max_links=6,
+                                max_depth='month')),
         ]
 
 

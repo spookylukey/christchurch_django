@@ -451,3 +451,9 @@ li.column.lastcolumn    {
     background-color: #660033;
     color: white;
 }
+
+.displayfilter {
+    border-radius: 4px;
+    padding: 0px 2px 2px 3px;
+    border: 1px solid #660033;
+}
