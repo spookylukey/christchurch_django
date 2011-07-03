@@ -198,20 +198,6 @@ h1 { font-size: 1.2em; }
 h2 { font-size: 1.1em; }
 h3 { font-size: 1.0em; }
 
-/* iframes */
-
-body.iframecontent {
-    background-color: white;
-    background-image: none;
-    color: black;
-}
-
-body.iframecontent .iframeinner
-{
-    /* allow room for h2 indent */
-    padding: 0 1em;
-}
-
 /* NAVBAR */
 #navbarcont {
     margin: 0;
