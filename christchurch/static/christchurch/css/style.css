@@ -481,6 +481,7 @@ li.column.lastcolumn    {
 .gallery div img {
     border: 2px solid #993366;
     margin: 10px;
+    cursor: pointer;
 }
 
 /* the overlayed element */
