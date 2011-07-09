@@ -1,0 +1,22 @@
+{% load thumbnail %}
+
+{# have to load it here to stop django-cms stomping on it when logged in #}
+<script type="text/javascript" src="{{ STATIC_URL }}christchurch/js/jquery.tools.min.js"></script>
+
+<div class="gallery" id="cmspluginGallery{{ gallery.pk }}">
+	{% for image in images %}
+		<div>
+			<img src="{% thumbnail image.src 115x80 crop %}" alt="{{ image.alt }}" title="{{ image.title }}" rel="#cmspluginGalleryImage{{ image.pk }}" />
+		</div>
+	{% endfor %}
+</div>
+
+{% for image in images %}
+<div class="simpleoverlay" style="display:none;" id="cmspluginGalleryImage{{ image.pk }}">
+	<img src="{{ image.src.url }}" />
+</div>
+{% endfor %}
+
+<script type="text/javascript">
+	jQuery('#cmspluginGallery{{ gallery.pk }} img').overlay();
+</script>

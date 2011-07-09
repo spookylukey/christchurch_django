@@ -127,6 +127,9 @@ INSTALLED_APPS = [
     'cms.plugins.googlemap',
     'semanticeditor',
     'pagination',
+    'cmsplugin_gallery',
+    'easy_thumbnails',
+    'inline_ordering',
 ]
 
 CMS_TEMPLATES = (
