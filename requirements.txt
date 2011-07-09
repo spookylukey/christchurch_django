@@ -8,7 +8,7 @@ vobject
 requests
 python-dateutil==1.4.1
 pytz>=2010b
-semanticeditor==0.2.1
+-e hg+https://bitbucket.org/spookylukey/semanticeditor/@3a40b4766f32#egg=semanticeditor
 django-pagination
 mutagen>=1.19
 -e hg+https://bitbucket.org/spookylukey/django-easyfilters/@0e6b385ed4ba#egg=django-easyfilters
