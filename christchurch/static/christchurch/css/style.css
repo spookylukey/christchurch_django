@@ -515,3 +515,8 @@ li.column.lastcolumn    {
     height: 35px;
     width: 35px;
 }
+
+
+.centered {
+    text-align: center;
+}
