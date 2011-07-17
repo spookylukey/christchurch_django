@@ -37,7 +37,12 @@ class SermonAdmin(admin.ModelAdmin):
         if obj.pk is None:
             from sermons.tags import set_attrs_from_filename
             set_attrs_from_filename(obj)
-        obj.save()
+            obj.save()
+        else:
+            from sermons.tags import write_id3_tags
+            obj.save()
+            write_id3_tags(obj)
+
 
 admin.site.register(Speaker, SpeakerAdmin)
 admin.site.register(Topic, TopicAdmin)
