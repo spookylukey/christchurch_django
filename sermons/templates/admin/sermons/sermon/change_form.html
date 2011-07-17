@@ -14,6 +14,10 @@
 
        $('input[name="_continue"]').click(function(ev) {
            var fname = $('#id_sermon').val();
+           if (fname == '') {
+               // No file selected - could be editing existing sermon.
+               return;
+           }
            // Get filename component, assuming '/' or '\' might be
            // path separators.
            fname = fname.split('\\').pop().split('/').pop();
