@@ -7,7 +7,6 @@ import re
 import sys
 
 from mutagen.id3 import ID3, TIT2, TDRC, TPE1, TIME, COMM
-
 from sermons.models import BIBLE_BOOKS, BIBLE_NAME_TO_VAL, Speaker, Series, Topic
 
 
@@ -71,7 +70,13 @@ def set_attrs_from_filename(sermon):
 def write_id3_tags(sermon):
     fname = sermon.sermon.file.name
     UTF8 = 3 # mutagen.id3 says so.
-    tags = ID3(fname)
+    try:
+        tags = ID3(fname)
+    except Exception:
+        # Could be missing or malformed header
+        tags = ID3()
+        tags.filename = fname
+
     tags.add(TIT2(encoding=UTF8, text=sermon.title))
     tags.add(TDRC(encoding=UTF8, text=
                   sermon.date_delivered.strftime('%Y-%m-%d') + ' ' +
