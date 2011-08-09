@@ -82,16 +82,7 @@ def write_id3_tags(sermon):
                   sermon.date_delivered.strftime('%Y-%m-%d') + ' ' +
                   sermon.time_delivered.strftime('%H:%M')))
     tags.add(TPE1(encoding=UTF8, text=sermon.speaker.name))
-    if sermon.bible_book != '':
-        tags.add(COMM(encoding=UTF8, lang='eng', desc='Sermon.bible_book', text=sermon.bible_book))
-    if sermon.passage != '':
-        tags.add(COMM(encoding=UTF8, lang='eng', desc='Sermon.passage', text=sermon.passage))
-    if sermon.series is not None:
-        tags.add(COMM(encoding=UTF8, lang='eng', desc='Sermon.series', text=sermon.series.name))
     topics = sermon.topics.all()
-    if len(topics) > 0:
-        tags.add(COMM(encoding=UTF8, lang='eng', desc='Sermon.topics', text=u','.join(
-                    t.name for t in topics)))
     comment = ("""
 Sermon:
  Speaker: %(speaker)s
