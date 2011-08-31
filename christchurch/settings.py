@@ -114,6 +114,7 @@ INSTALLED_APPS = [
     'south',
     'christchurch',
     'sermons',
+    'contacts',
     'cms',
     'menus',
     'mptt',
