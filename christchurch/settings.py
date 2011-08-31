@@ -178,6 +178,9 @@ else:
 
     SEND_BROKEN_LINK_EMAILS = False
 
+## WEBFACTION API
+
+from .settings_priv import WEBFACTION_USER, WEBFACTION_PASSWORD
 
 SEMANTICEDITOR_MEDIA_URL = os.path.join(STATIC_URL, "semanticeditor/")
 

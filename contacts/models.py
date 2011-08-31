@@ -27,3 +27,10 @@ class Contact(models.Model):
 
     class Meta:
         ordering = ['name']
+
+
+# Signals:
+from django.db.models.signals import post_save
+from .lists import update_home_group_lists
+
+post_save.connect(update_home_group_lists, sender=Contact)
