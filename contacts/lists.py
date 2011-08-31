@@ -3,6 +3,8 @@ from contacts.webfaction import webfaction_session
 
 def update_home_group_lists(*args, **kwargs):
     from .models import HomeGroup
+    if kwargs.get('raw', False):
+        return # don't do this for fixture loading
 
     s = webfaction_session()
     if s is None:
