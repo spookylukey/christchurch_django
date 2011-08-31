@@ -104,6 +104,9 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 ROOT_URLCONF = 'christchurch.urls'
 
 INSTALLED_APPS = [
+    'christchurch',  # Our templates before anyone else's
+    'sermons',
+    'contacts',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -112,9 +115,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'south',
-    'christchurch',
-    'sermons',
-    'contacts',
     'cms',
     'menus',
     'mptt',

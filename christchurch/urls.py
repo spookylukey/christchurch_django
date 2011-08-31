@@ -9,6 +9,13 @@ urlpatterns = patterns('',
                        url(r'^thissunday/$', 'christchurch.views.this_sunday'),
                        url(r'^upcoming-midweek/$', 'christchurch.views.upcoming_midweek'),
                        url(r'^semantic/', include('semanticeditor.urls')),
+
+                       # Plug in the password reset views
+                       (r'^admin/password_reset/$', 'django.contrib.auth.views.password_reset'),
+                       (r'^admin/password_reset/done/$', 'django.contrib.auth.views.password_reset_done'),
+                       (r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm'),
+                       (r'^reset/done/$', 'django.contrib.auth.views.password_reset_complete'),
+
                        url(r'^admin/', include(admin.site.urls)),
                        url(r'^', include('cms.urls')),
                        # Sermons views included via apphooks
