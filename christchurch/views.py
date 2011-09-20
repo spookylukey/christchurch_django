@@ -49,8 +49,8 @@ class Event(object):
     def __cmp__(self, other):
         if type(self.start) != type(other.start):
             # Cope with 'date' objects by converting both to 'date'
-            return cmp(self.start.date if hasattr(self.start, 'date') else self.start,
-                       other.start.date if hasattr(other.start, 'date') else other.start)
+            return cmp(self.start.date() if hasattr(self.start, 'date') else self.start,
+                       other.start.date() if hasattr(other.start, 'date') else other.start)
         else:
             return cmp(self.start, other.start)
 
