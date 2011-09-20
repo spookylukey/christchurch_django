@@ -220,20 +220,25 @@ def _update_project_sources(target, version):
     # This also copies the virtualenv which is contained in the same folder,
     # which saves a lot of time with installing.
 
-    current_srcs = target.current_version.src_dir
-
-    if files.exists(current_srcs):
-        # By copying, we can avoid recreating the virtualenv and the project
-        # sources, saving time and bandwidth.
-        run("cp -a -L %s %s" % (current_srcs, version.src_dir))
-    else:
-        # Starting from scratch
-        run("mkdir %s" % version.src_dir)
-        with cd(version.src_dir):
+    run("mkdir -p %s" % version.src_dir)
+    with cd(version.src_dir):
+        if files.exists(target.current_version.project_dir + "/.hg"):
+            # Clone local copy if we can
+            run("hg clone %s project" % target.current_version.project_dir)
+        else:
             run("hg clone ssh://hg@bitbucket.org/spookylukey/christchurch_django project")
 
-    with cd(version.project_dir):
-        run("hg pull -u")
+        with cd(version.project_dir):
+            # We update to the version that is currently checked out locally,
+            # because, at least for staging, it might not be the tip of default.
+            current_rev = local("hg id -i", capture=True)
+            run("hg pull ssh://hg@bitbucket.org/spookylukey/christchurch_django")
+            run("hg update -r %s" % current_rev.strip("+"))
+
+        # Avoid recreating the virtualenv if we can
+        if files.exists(target.current_version.venv_dir):
+            run("cp -a -L %s %s" % (target.current_version.venv_dir,
+                                    version.src_dir))
 
     # Also need to sync files that are not in main sources VCS repo.
     local("rsync christchurch/settings_priv.py cciw@christchurchbradford.org.uk:%s/christchurch/settings_priv.py" % version.project_dir)
