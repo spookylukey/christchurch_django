@@ -21,6 +21,7 @@ class Contact(models.Model):
     email = models.EmailField(blank=True)
     home_group = models.ForeignKey(HomeGroup, null=True, blank=True)
     church_member = models.BooleanField()
+    include_on_email_lists = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.name
