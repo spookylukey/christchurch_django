@@ -27,8 +27,12 @@ else:
 if DEVBOX:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': '../christchurchbradford.db',
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'christchurch',
+            'USER': 'christchurch',
+            'PASSWORD': 'foo',
+            'HOST': 'localhost',
+            'PORT': 5432,
             }
         }
 else:
