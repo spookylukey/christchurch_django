@@ -24,3 +24,16 @@ def update_home_group_lists(*args, **kwargs):
             else:
                 # Create new
                 s.create_email(hg.group_email, email_list_s)
+
+    # Lists for all church members and all contacts
+    contacts = []
+    members = []
+    for c in Contact.object.exclude(email='',
+                                    include_on_email_lists=False):
+        if c.church_member:
+            members.add(c.email)
+        contacts.add(c.email)
+
+    s.update_email('church-contacts@christchurchbradford.org.uk', ', '.join(contacts))
+    s.update_email('church-members@christchurchbradford.org.uk', ', '.join(members))
+
