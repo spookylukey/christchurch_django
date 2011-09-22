@@ -15,7 +15,8 @@ def update_home_group_lists(*args, **kwargs):
 
     for hg in HomeGroup.objects.exclude(group_email=''):
         if hg.group_email != '':
-            email_list = list(set([c.email for c in hg.contact_set.exclude(email='')]))
+            email_list = list(set([c.email for c in hg.contact_set.exclude(email='',
+                                                                           include_on_email_lists=False)]))
             email_list_s = ', '.join(email_list)
             if hg.group_email in webfaction_email_list:
                 # Update:
