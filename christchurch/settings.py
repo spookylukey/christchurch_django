@@ -123,7 +123,6 @@ INSTALLED_APPS = [
     'menus',
     'mptt',
     'appmedia',
-    'south',
     'cms.plugins.text',
     'cms.plugins.picture',
     'cms.plugins.link',
