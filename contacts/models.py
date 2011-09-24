@@ -12,6 +12,13 @@ class HomeGroup(models.Model):
         ordering = ['name']
 
 
+class ContactManager(models.Manager):
+    use_for_related_fields = True
+
+    def get_query_set(self):
+        return super(ContactManager, self).get_query_set().select_related('home_group')
+
+
 class Contact(models.Model):
     name = models.CharField(max_length=100)
     address = models.TextField(blank=True)
@@ -22,6 +29,8 @@ class Contact(models.Model):
     home_group = models.ForeignKey(HomeGroup, null=True, blank=True)
     church_member = models.BooleanField()
     include_on_email_lists = models.BooleanField(default=True)
+
+    objects = ContactManager()
 
     def __unicode__(self):
         return self.name
