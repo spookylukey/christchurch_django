@@ -6,7 +6,7 @@ from .models import Contact, HomeGroup
 class ContactAdmin(admin.ModelAdmin):
     def address(obj):
         lines = obj.address.split('\n')
-        return lines[0] + u'...' if len(lines) > 1 else u''
+        return lines[0] + u'...' if len(lines) > 1 else obj.address
     list_display = ['name', address, 'post_code', 'phone_number', 'mobile_number', 'email', 'church_member', 'home_group']
     list_filter = ['church_member', 'home_group']
 
