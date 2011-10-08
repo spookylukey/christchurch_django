@@ -162,6 +162,7 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 262144
 
 DEFAULT_FILE_STORAGE = 'christchurch.files.FriendlyFileSystemStorage'
 
+FILE_UPLOAD_PERMISSIONS = 0644
 
 #####  EMAIL  #######
 
