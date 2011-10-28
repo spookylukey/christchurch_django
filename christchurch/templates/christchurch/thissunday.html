@@ -6,5 +6,8 @@
       <h2>{{ event.start|date:"F j, Y" }}</h2>
     {% endifchanged %}
   <p><b>{{ event.nice_time }}:</b> {{ event.summary }}</p>
+    {% if event.description %}
+      <p><strong>{{ event.description }}</strong></p>
+    {% endif %}
   {% endfor %}
 {% endif %}

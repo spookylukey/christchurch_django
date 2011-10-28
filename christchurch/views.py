@@ -70,7 +70,9 @@ def this_sunday(request):
         # not part way through, so truncate hour to zero.
         today = datetime.now(local_timezone).replace(hour=0)
         raw_events = search(cal, today, today + timedelta(7))
-        events = [Event(vevent.summary.value, dt)
+        events = [Event(vevent.summary.value, dt,
+                        description=vevent.description.value
+                        if hasattr(vevent, 'description') else None)
                   for (dt, vevent) in raw_events]
         events.sort()
         c['events'] = events
