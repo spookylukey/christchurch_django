@@ -14,6 +14,12 @@ class SermonFilterSet(FilterSet):
                                 max_depth='month')),
         ]
 
+    title_fields = [
+        'speaker',
+        'series',
+        'bible_book'
+        ]
+
 
 def index(request):
     sermons = Sermon.objects.filter(published=True)

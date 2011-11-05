@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>{{ request.current_page.get_title }} :: Christ Church, Bradford</title>
+  <title>{% block title %}{{ request.current_page.get_title }}{% endblock %} :: Christ Church, Bradford</title>
   <meta name="keywords" content="Christ church, Bradford, church, evangelical, reformed, christchurch, Yorkshire, UK, Pollard Park">
   <script type="text/javascript" src="{{ STATIC_URL }}admin/js/jquery.min.js"></script>
   <link rel="StyleSheet" href="{{ STATIC_URL }}christchurch/css/style.css" type="text/css">

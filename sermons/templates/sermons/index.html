@@ -1,5 +1,12 @@
 {% extends "standard.html" %}
 {% load pagination_tags %}
+
+{% block title %}Sermons
+  {% with title=sermonsfilter.title %}
+    {% if title %} - {{ title }}{% endif %}
+  {% endwith %}
+{% endblock %}
+
 {% block content %}
 {{ block.super }}
 
