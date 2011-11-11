@@ -521,3 +521,30 @@ li.column.lastcolumn    {
 .centered {
     text-align: center;
 }
+
+div.sermon {
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+.sermon h3 {
+    margin: 0px;
+    padding: 0px 2px;
+}
+
+p.sermonactions, p.sermondetails {
+    margin: 4px 8px;
+    padding: 2px 4px;
+}
+
+p.sermondetails {
+    border-radius: 4px;
+    border: 1px solid #c0c0c0;
+}
+
+.sermonactions img {
+    vertical-align: bottom;
+    margin-right: 4px;
+}
