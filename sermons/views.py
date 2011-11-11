@@ -22,7 +22,7 @@ class SermonFilterSet(FilterSet):
 
 
 def index(request):
-    sermons = Sermon.objects.filter(published=True).select_related('series', 'speaker')
+    sermons = Sermon.objects.filter(published=True).select_related('series', 'speaker').order_by('-date_delivered', '-time_delivered')
     sermonsfilter = SermonFilterSet(sermons, request.GET)
     return render(request, "sermons/index.html", {'sermons': sermonsfilter.qs,
                                                   'sermonsfilter': sermonsfilter})
