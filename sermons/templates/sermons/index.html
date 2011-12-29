@@ -2,9 +2,7 @@
 {% load pagination_tags %}
 
 {% block title %}Sermons
-  {% with title=sermonsfilter.title %}
-    {% if title %} - {{ title }}{% endif %}
-  {% endwith %}
+  {% if sermonsfilter.title %} - {{ sermonsfilter.title }}{% endif %}
 {% endblock %}
 
 {% block content %}
