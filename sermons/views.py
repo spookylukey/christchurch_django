@@ -8,7 +8,6 @@ class SermonFilterSet(FilterSet):
     fields = [
         ('speaker', dict(order_by_count=True)),
         'series',
-        'topics',
         'bible_book',
         ('date_delivered', dict(max_links=6,
                                 max_depth='month')),
