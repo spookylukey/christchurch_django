@@ -312,13 +312,13 @@ td h3 {
     padding-top: 0;
 }
 
-img.right {
+img.right, .align-right img {
     float: right;
     margin-left: 5px;
     margin-bottom: 5px;
 }
 
-img.left {
+img.left, .align-left img {
     float: left;
     margin-right: 5px;
     margin-bottom: 5px;

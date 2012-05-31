@@ -58,7 +58,62 @@
       </div>
     </div>
   </div>
+{% addtoblock "js" %}
   <script type="text/javascript" src="{{ STATIC_URL }}admin/js/jquery.min.js"></script>
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
+  <script type="text/javascript" src="{{ STATIC_URL }}christchurch/js/jquery.cycle.lite.js"></script>
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
+  <script type="text/javascript">
+jQuery(document).ready(function(event) {
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    if ($('#photochanger').length > 0) {
+        function addImages() {
+            var list = getCookie('photocycler');
+            if (list == undefined) {
+                // maybe it didn't load yet
+                setTimeout(addImages, 1000);
+            } else {
+                list = list.split('|');
+                if (jQuery('#photochanger img').length == 1) {
+                    for (var i = 0; i < list.length; i++) {
+                        jQuery('#photochanger').append("<img src='/usermedia/photos/slideshow/" + list[i] +  "' width='450' height='200' alt='' />");
+                    }
+                }
+                jQuery('#photochanger').cycle({
+                    timeout: 4000,
+                    delay: -1000,
+                    sync: 0
+                });
+
+            }
+        }
+
+        addImages();
+    }
+});
+</script>
+{% endaddtoblock %}
+
   {% render_block "js" %}
 </body>
 </html>
