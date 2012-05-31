@@ -1,13 +1,15 @@
-{% load cms_tags %}{% load menu_tags %}<!DOCTYPE html>
+{% load cms_tags sekizai_tags %}
+{% load menu_tags %}
+<!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>{% block title %}{{ request.current_page.get_title }}{% endblock %} :: Christ Church, Bradford</title>
   <meta name="keywords" content="Christ church, Bradford, church, evangelical, reformed, christchurch, Yorkshire, UK, Pollard Park">
-  <script type="text/javascript" src="{{ STATIC_URL }}admin/js/jquery.min.js"></script>
   <link rel="StyleSheet" href="{{ STATIC_URL }}christchurch/css/style.css" type="text/css">
 
-  {% plugins_media %}
+  {% render_block "css" %}
+
   {% if GOOGLE_ANALYTICS_ACCOUNT %}
 <script type="text/javascript">
 
@@ -27,6 +29,7 @@
 
 
 <body>
+ {% cms_toolbar %}
   <div id="headercont">
     <div id="header">
       <div id="headertext"><a href="/">Christ Church, Bradford</a></div>
@@ -55,5 +58,7 @@
       </div>
     </div>
   </div>
+  <script type="text/javascript" src="{{ STATIC_URL }}admin/js/jquery.min.js"></script>
+  {% render_block "js" %}
 </body>
 </html>

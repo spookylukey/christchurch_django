@@ -1,8 +1,9 @@
 psycopg2>=0.7.2
 south
-django-cms==2.1.3
+django-cms==2.2
 django-appmedia
-django-classy-tags>=0.2.2
+django-classy-tags>=0.3.4.1
+django-mptt==0.5.1
 Django==1.3.1
 vobject
 requests
@@ -15,4 +16,4 @@ django-easyfilters==0.3.2
 django-inline-ordering==0.1.3
 easy-thumbnails==1.0-alpha-17
 cmsplugin_gallery==0.1.7
-
+django-sekizai==0.5

@@ -91,7 +91,6 @@ MIDDLEWARE_CLASSES = [
     'cms.middleware.page.CurrentPageMiddleware',
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',
-    'cms.middleware.media.PlaceholderMediaMiddleware',
     'pagination.middleware.PaginationMiddleware',
 ]
 
@@ -103,6 +102,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     'django.core.context_processors.static',
     'cms.context_processors.media',
     'christchurch.processors.common',
+    'sekizai.context_processors.sekizai',
 ]
 
 ROOT_URLCONF = 'christchurch.urls'
@@ -122,6 +122,7 @@ INSTALLED_APPS = [
     'cms',
     'menus',
     'mptt',
+    'sekizai',
     'appmedia',
     'cms.plugins.text',
     'cms.plugins.picture',
