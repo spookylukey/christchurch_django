@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 import os
 os.environ['DJANGO_SETTINGS_MODULE'] = 'christchurch.settings'
 
