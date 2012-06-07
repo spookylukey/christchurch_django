@@ -114,6 +114,19 @@ jQuery(document).ready(function(event) {
 </script>
 {% endaddtoblock %}
 
+{# it doesn't work if we add this in the 'gallery.html' template #}
+{% addtoblock "js" %}
+<script type="text/javascript" src="{{ STATIC_URL }}christchurch/js/jquery.tools.min.js"></script>
+{% endaddtoblock %}
+{% addtoblock "js" %}
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    jQuery('.gallery img').overlay();
+});
+</script>
+{% endaddtoblock %}
+
+
   {% render_block "js" %}
 </body>
 </html>
