@@ -114,7 +114,9 @@ jQuery(document).ready(function(event) {
 </script>
 {% endaddtoblock %}
 
-{# it doesn't work if we add this in the 'gallery.html' template #}
+{# We have to include a bunch of javascript here due to #}
+{# sekizai, which wants the js block at the bottom      #}
+ 
 {% addtoblock "js" %}
 <script type="text/javascript" src="{{ STATIC_URL }}christchurch/js/jquery.tools.min.js"></script>
 {% endaddtoblock %}
@@ -124,6 +126,37 @@ jQuery(document).ready(function () {
     jQuery('.gallery img').overlay();
 });
 </script>
+
+<script type="text/javascript">
+(function($) {
+    $(document).ready(function () {
+        if ($('#midweekmeetings').length > 0) {
+            $.ajax({url:'/upcoming-midweek/',
+                        success: function(data, testStatus, jqXHR) {
+                            var replacement = $(data);
+                            $('#midweekmeetings').fadeOut(function() {
+                              $('#midweekmeetings p').replaceWith(replacement);
+                              $('#midweekmeetings').fadeIn('fast');
+                            });
+                        }
+                       });
+        }
+
+        if ($('#thissunday').length > 0) {
+            $.ajax({url:'/thissunday/',
+                        success: function(data, testStatus, jqXHR) {
+                            var replacement = $(data);
+                            $('#thissunday').fadeOut(function() {
+                              $('#thissunday p').replaceWith(replacement);
+                              $('#thissunday').fadeIn('fast');
+                            });
+                        }
+                       });
+        }
+   });
+})(jQuery);
+</script>
+
 {% endaddtoblock %}
 
 
