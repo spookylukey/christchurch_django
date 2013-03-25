@@ -203,18 +203,18 @@ def _update_virtualenv(version):
         os.unlink(pth_name)
 
 
-def _stop_apache(target):
+def stop_apache():
     run(join(target.webapp_root, "apache2/bin/stop"))
 
 
-def _start_apache(target):
+def start_apache():
     run(join(target.webapp_root, "apache2/bin/start"))
 
 
-def _restart_apache(target):
+def restart_apache():
     with settings(warn_only=True):
-        _stop_apache(target)
-    _start_apache(target)
+        stop_apache()
+    start_apache()
 
 def _update_project_sources(target, version):
     # This also copies the virtualenv which is contained in the same folder,
@@ -226,14 +226,19 @@ def _update_project_sources(target, version):
             # Clone local copy if we can
             run("hg clone %s project" % target.current_version.project_dir)
         else:
-            run("hg clone ssh://hg@bitbucket.org/spookylukey/christchurch_django project")
+            run("hg init")
 
         with cd(version.project_dir):
             # We update to the version that is currently checked out locally,
             # because, at least for staging, it might not be the tip of default.
-            current_rev = local("hg id -i", capture=True)
-            run("hg pull ssh://hg@bitbucket.org/spookylukey/christchurch_django")
-            run("hg update -r %s" % current_rev.strip("+"))
+            current_rev = local("hg id -i", capture=True).strip("+")
+            local("hg push -f -r %(rev)s ssh://%(user)s@%(host)s/%(path)s || true" %
+                  dict(host=env.host,
+                       user=env.user,
+                       path=version.project_dir,
+                       rev=current_rev,
+                       ))
+            run("hg update -r %s" % current_rev)
 
         # Avoid recreating the virtualenv if we can
         if files.exists(target.current_version.venv_dir):
@@ -267,7 +272,7 @@ def _update_db(target, version):
             run_venv("./manage.py migrate --all")
 
 
-def _deploy(target):
+def deploy():
     label = datetime.now().strftime("%Y-%m-%d_%H.%M.%S")
     version = target.make_version(label)
 
@@ -287,12 +292,12 @@ def _deploy(target):
 
     db_backup_name = backup_database(target, version)
     _update_db(target, version)
-    _stop_apache(target)
+    stop_apache()
     _update_symlink(target, version)
-    _start_apache(target)
+    start_apache()
 
 
-def _clean(target):
+def clean():
     """
     Misc clean-up tasks
     """
@@ -311,52 +316,15 @@ def _clean(target):
             run("rm -rf %s" % d)
 
 
-def deploy_staging():
-    _deploy(STAGING)
+def staging():
+    global target
+    target = STAGING
 
 
-def deploy_production():
-    _deploy(PRODUCTION)
+def production():
+    global target
+    target = PRODUCTION
 
-
-def stop_apache_production():
-    _stop_apache(PRODUCTION)
-
-
-def stop_apache_staging():
-    _stop_apache(STAGING)
-
-
-def start_apache_production():
-    _start_apache(PRODUCTION)
-
-
-def start_apache_staging():
-    _start_apache(STAGING)
-
-
-def restart_apache_production():
-    _restart_apache(PRODUCTION)
-
-
-def restart_apache_staging():
-    _restart_apache(STAGING)
-
-
-def clean_staging():
-    _clean(STAGING)
-
-
-def clean_production():
-    _clean(PRODUCTION)
-
-
-def test_staging():
-    _test_remote(STAGING)
-
-
-def test_production():
-    _test_remote(PRODUCTION)
 
 
 def upload_usermedia():
