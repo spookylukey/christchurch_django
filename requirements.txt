@@ -4,12 +4,12 @@ django-cms==2.3.3
 django-appmedia
 django-classy-tags>=0.3.4.1
 django-mptt==0.5.1
-Django==1.4.1
+Django==1.4.5
 vobject
 requests
 python-dateutil==1.4.1
 pytz>=2010b
--e hg+https://bitbucket.org/spookylukey/semanticeditor/@3a40b4766f32#egg=semanticeditor
+semanticeditor==0.3
 django-pagination
 mutagen>=1.19
 django-easyfilters==0.3.2
