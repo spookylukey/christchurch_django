@@ -1,14 +1,11 @@
-from collections import namedtuple
-from datetime import datetime
-from fabric.api import run, local, abort, env, put
-from fabric.contrib import files
-from fabric.contrib import console
-from fabric.decorators import hosts, runs_once
-from fabric.context_managers import cd, lcd, settings, hide
 import os
 import os.path
-join = os.path.join
-import sys
+import posixpath
+
+from fabric.api import run, local, abort, env, put, task
+from fabric.contrib.files import exists
+from fabric.context_managers import cd, lcd, settings, hide
+import psutil
 
 #  fabfile for deploying Christ Church website
 #
@@ -24,321 +21,286 @@ import sys
 #
 #  usermedia/  - corresponds to MEDIA_ROOT
 #
-# === Deployment ===
-#
-# There are two targets, STAGING and PRODUCTION, which live on the same
-# server. They are almost identical, with these differences:
-# - STAGING is on staging.christchurchbradford.org.uk
-# - PRODUCTION is on www.christchurchbradford.org.uk
-# - They have different databases
-# - They have different apps on the webfaction server
-#    - for the django project app
-#    - for the static app
-#
-# settings_priv.py and settings.py controls these things.
-#
-# In each target, we aim for atomic switching from one version to the next.
-# This is not quite possible, but as much as possible the different versions
-# are kept separate, preparing the new one completely before switching to it.
-#
-# To achieve this, new code is uploaded to a new 'dest_dir' which is timestamped,
-# inside the 'src' dir in the christchurch app directory.
-
-# /home/cciw/webapps/christchurch/         # PRODUCTION or
-# /home/cciw/webapps/christchurch_staging/ # STAGING
-#    src/
-#       src-2010-10-11_07-20-34/
-#          env/                    # virtualenv dir
-#          project/                # uploaded from local
-#          static/                 # built once uploaded
-#       current/                   # symlink to src-???
-
-# At the same level as 'src-2010-10-11_07-20-34', there is a 'current' symlink
-# which points to the most recent one. The apache instance looks at this (and
-# the virtualenv dir inside it) to run the app.
-
-# There is a webfaction app that points to src/current/static for serving static
-# media. (One for production, one for staging). There is also a 'christchurch_usermedia'
-# app which is currently shared between production and staging. (This will only
-# be a problem if usermedia needs to be re-organised).
-
-# Code is deployed by pushing dev code to bitbucket, then pulling.
-
-# When deploying, once the new directory is ready, the apache instance is
-# stopped, the database is upgraded, and the 'current' symlink is switched. Then
-# the apache instance is started.
-
-# The information about this layout is unfortunately spread around a couple of
-# places - this file and the settings file - because it is needed in both at
-# different times.
-
 # === Bootstrapping ===
 #
 # Steps needed on a new server:
-# - create Django app on webfaction.
+# - create custom app on webfaction.
 # - create static app on webfaction
 # - create usermedia app on webfaction
 # - create database on webfaction
 #
-# # Make layout and modify various things:
-# $ cd ~/webapps/christchurch_django/
-# $ mkdir src
-# $ mkdir db
-# $ mv myproject.wsgi project.wsgi
-# $ replace myproject christchurch -- project.wsgi
-# $ rm -rf myproject/ lib/
-# $ emacs apache/conf/http.conf
-# - Remove python path
-# - Change myproject -> project
-# $ emacs apache/bin/start
-# - Add:
-#   . $HOME/webapps/christchurch_django/src/current/env/bin/activate
-
 # Then deploy using this fabfile
-
-# Then create webfaction symlink app for static media
-
-# Same again for christchurch_django_staging, with a different
-# webapp dir and venv dir.
 
 # Remember to add password info to ~/.pgpass
 
-env.hosts = ["cciw@christchurchbradford.org.uk"]
-
-this_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(this_dir)
-webapps_root = '/home/cciw/webapps'
-
-# The path (relative to parent_dir) to where the project source code is stored:
-project_dir = 'project'
-usermedia_local = os.path.join(parent_dir, 'usermedia')
-usermedia_production = os.path.join(webapps_root, 'christchurch_usermedia')
-
-class Target(object):
-    """
-    Represents a place where the project is deployed to.
-
-    """
-    def __init__(self, django_app='', dbname=''):
-        self.django_app = django_app
-        self.dbname = dbname
-
-        self.webapp_root = join(webapps_root, self.django_app)
-        # src_root - the root of all sources on this target.
-        self.src_root = join(self.webapp_root, 'src')
-        self.current_version = SrcVersion('current', join(self.src_root, 'current'))
-
-    def make_version(self, label):
-        return SrcVersion(label, join(self.src_root, "src-%s" % label))
-
-class SrcVersion(object):
-    """
-    Represents a version of the project sources on a Target
-    """
-    def __init__(self, label, src_dir):
-        self.label = label
-        # src_dir - the root of all sources for this version
-        self.src_dir = src_dir
-        # venv_dir - note that _update_virtualenv assumes this relative layout
-        # of the 'env' dir and the 'project' dir.
-        self.venv_dir = join(self.src_dir, 'env')
-        # project_dir - where the CHRISTCHURCH project srcs are stored.
-        self.project_dir = join(self.src_dir, project_dir)
-        # static_dir - this is defined this way in settings.py
-        self.static_dir = join(self.src_dir, 'static')
-
-        self.additional_sys_paths = [project_dir]
-
-STAGING = Target(
-    django_app = "christchurch_django_staging",
-    dbname = "cciw_christchurch_staging",
-)
-
-PRODUCTION = Target(
-    django_app = "christchurch_django",
-    dbname = "cciw_christchurch",
-)
-
-def backup_database(target, version):
-    fname = "%s-%s.db" % (target.dbname, version.label)
-    fullname = join(target.webapp_root, 'db', fname)
-    run("dump_pg_db.sh %s %s" % (target.dbname, fullname))
+# Some information here about paths has to correspond to that found in
+# settings.py or settings_priv.py
 
 
-def run_venv(command, **kwargs):
-    run("source %s/bin/activate" % env.venv + " && " + command, **kwargs)
+USER = 'cciw'
+HOST = 'christchurchbradford.org.uk'
+APP_NAME = 'christchurch'
+APP_PORT = 29584
+GUNICORN_WORKERS = 2
+
+# Host and login username:
+env.hosts = ['%s@%s' % (USER, HOST)]
+
+# Directory where everything to do with this app will be stored on the server.
+DJANGO_APP_ROOT = '/home/%s/webapps/%s_django' % (USER, APP_NAME)
+
+# Directory where static sources should be collected.  This must equal the value
+# of STATIC_ROOT in the settings.py that is used on the server.
+STATIC_ROOT = '/home/%s/webapps/%s_static/' % (USER, APP_NAME)
+
+# This must equal the value of MEDIA_ROOT in settings.py
+MEDIA_ROOT =  '/home/%s/webapps/%s_usermedia/' % (USER, APP_NAME)
+
+# Subdirectory of DJANGO_APP_ROOT in which project sources will be stored
+SRC_SUBDIR = 'src'
+
+# Subdirectory of DJANGO_APP_ROOT in which virtualenv will be stored
+VENV_SUBDIR = 'venv'
+
+# Python version
+PYTHON_BIN = "python2.7"
+PYTHON_PREFIX = "" # e.g. /usr/local  Use "" for automatic
+PYTHON_FULL_PATH = "%s/bin/%s" % (PYTHON_PREFIX, PYTHON_BIN) if PYTHON_PREFIX else PYTHON_BIN
+
+GUNICORN_PIDFILE = "%s/gunicorn.pid" % DJANGO_APP_ROOT
+GUNICORN_LOGFILE = "/home/%s/logs/user/gunicorn_%s.log" % (USER, APP_NAME)
+
+SRC_DIR = posixpath.join(DJANGO_APP_ROOT, SRC_SUBDIR)
+VENV_DIR = posixpath.join(DJANGO_APP_ROOT, VENV_SUBDIR)
+
+WSGI_MODULE = '%s.wsgi' % APP_NAME
+
+
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+MEDIA_ROOT_LOCAL = os.path.join(PARENT_DIR, 'usermedia')
+
+
+DB_NAME = 'cciw_christchurch'
+DB_USER = 'cciw_christchurch'
 
 
 def virtualenv(venv_dir):
     """
-    Context manager that establishes a virtualenv to use,
+    Context manager that establishes a virtualenv to use.
     """
     return settings(venv=venv_dir)
 
 
-def _update_symlink(target, version):
-    if files.exists(target.current_version.src_dir):
-        run("rm %s" % target.current_version.src_dir) # assumes symlink
-    run("ln -s %s %s" % (version.src_dir, target.current_version.src_dir))
+def run_venv(command, **kwargs):
+    """
+    Runs a command in a virtualenv (which has been specified using
+    the virtualenv context manager
+    """
+    run("source %s/bin/activate" % env.venv + " && " + command, **kwargs)
 
 
-def _update_virtualenv(version):
-    # Update virtualenv in new dir.
-    with cd(version.src_dir):
-        # We should already have a virtualenv, but it will need paths updating
-        run("virtualenv --python=python2.7 env")
-        # Need this to stop ~/lib/ dirs getting in:
-        run("touch env/lib/python2.7/sitecustomize.py")
-        with virtualenv(version.venv_dir):
-            with cd(version.project_dir):
-                run_venv("pip install -r requirements.txt")
-
-        # Need to add project to path.
-        # Could do 'python setup.py develop' but not all projects support it
-        pth_file = '\n'.join("../../../../" + n for n in version.additional_sys_paths)
-        pth_name = "deps.pth"
-        with open(pth_name, "w") as fd:
-            fd.write(pth_file)
-        put(pth_name, join(version.venv_dir, "lib/python2.7/site-packages"))
-        os.unlink(pth_name)
+def install_dependencies():
+    ensure_virtualenv()
+    with virtualenv(VENV_DIR):
+        with cd(SRC_DIR):
+            run_venv("pip install -r requirements.txt")
 
 
-def stop_apache():
-    run(join(target.webapp_root, "apache2/bin/stop"))
+def ensure_virtualenv():
+    if exists(VENV_DIR):
+        return
+
+    with cd(DJANGO_APP_ROOT):
+        run("virtualenv --no-site-packages --python=%s %s" %
+            (PYTHON_BIN, VENV_SUBDIR))
+        run("echo %s > %s/lib/%s/site-packages/projectsource.pth" %
+            (SRC_DIR, VENV_SUBDIR, PYTHON_BIN))
 
 
-def start_apache():
-    run(join(target.webapp_root, "apache2/bin/start"))
-
-
-def restart_apache():
-    with settings(warn_only=True):
-        stop_apache()
-    start_apache()
-
-def _update_project_sources(target, version):
-    # This also copies the virtualenv which is contained in the same folder,
-    # which saves a lot of time with installing.
-
-    run("mkdir -p %s" % version.src_dir)
-    with cd(version.src_dir):
-        if files.exists(target.current_version.project_dir + "/.hg"):
-            # Clone local copy if we can
-            run("hg clone %s project" % target.current_version.project_dir)
-        else:
+def ensure_src_dir():
+    if not exists(SRC_DIR):
+        run("mkdir -p %s" % SRC_DIR)
+    with cd(SRC_DIR):
+        if not exists(posixpath.join(SRC_DIR, '.hg')):
             run("hg init")
 
-        with cd(version.project_dir):
-            # We update to the version that is currently checked out locally,
-            # because, at least for staging, it might not be the tip of default.
-            current_rev = local("hg id -i", capture=True).strip("+")
-            local("hg push -f -r %(rev)s ssh://%(user)s@%(host)s/%(path)s || true" %
-                  dict(host=env.host,
-                       user=env.user,
-                       path=version.project_dir,
-                       rev=current_rev,
-                       ))
-            run("hg update -r %s" % current_rev)
 
-        # Avoid recreating the virtualenv if we can
-        if files.exists(target.current_version.venv_dir):
-            run("cp -a -L %s %s" % (target.current_version.venv_dir,
-                                    version.src_dir))
-
-    # Also need to sync files that are not in main sources VCS repo.
-    local("rsync christchurch/settings_priv.py cciw@christchurchbradford.org.uk:%s/christchurch/settings_priv.py" % version.project_dir)
-
-def _build_static(version):
-    # This always copies all files anyway, and we want to delete any unwanted
-    # files, so we start from clean dir.
-    run("rm -rf %s" % version.static_dir)
-
-    with virtualenv(version.venv_dir):
-        with cd(version.project_dir):
-            # django-cms requires appmedia, which overlaps a lot with Django's
-            # own 'statcifiles', but with different conventions (appmedia looks
-            # for 'media' directories and copies to MEDIA_ROOT, Django looks for
-            # 'static' and copies to STATIC_ROOT).
-            run_venv("./manage.py collectstatic -v 0 --noinput")
-            run_venv("./manage.py symlinkmedia")
-
-    run("chmod -R ugo+r %s" % version.static_dir)
+@task
+def push_rev(rev):
+    """
+    Use the specified revision for deployment, instead of the current revision.
+    """
+    env.push_rev = rev
 
 
-def _update_db(target, version):
-    with virtualenv(version.venv_dir):
-        with cd(version.project_dir):
-            run_venv("./manage.py syncdb")
-            run_venv("./manage.py migrate --all")
+def push_sources():
+    """
+    Push source code to server.
+    """
+    ensure_src_dir()
+    push_rev = getattr(env, 'push_rev', None)
+    if push_rev is None:
+        push_rev = local("hg id", capture=True).split(" ")[0].strip().strip("+")
+
+    local("hg push -f ssh://%(user)s@%(host)s/%(path)s || true" %
+          dict(host=env.host,
+               user=env.user,
+               path=SRC_DIR,
+               ))
+    with cd(SRC_DIR):
+        run("hg update %s" % push_rev)
 
 
+@task
+def webserver_stop():
+    """
+    Stop the webserver that is running the Django instance
+    """
+    run("kill $(cat %s)" % GUNICORN_PIDFILE)
+    run("rm %s" % GUNICORN_PIDFILE)
+
+
+def _webserver_command():
+    return ("%(venv_dir)s/bin/gunicorn --log-file=%(logfile)s -b 127.0.0.1:%(port)s -D -w %(workers)s --pid %(pidfile)s %(wsgimodule)s:application" %
+            {'venv_dir': VENV_DIR,
+             'pidfile': GUNICORN_PIDFILE,
+             'wsgimodule': WSGI_MODULE,
+             'port': APP_PORT,
+             'workers': GUNICORN_WORKERS,
+             'logfile': GUNICORN_LOGFILE,
+             }
+            )
+
+
+@task
+def webserver_start():
+    """
+    Starts the webserver that is running the Django instance
+    """
+    run(_webserver_command())
+
+
+@task
+def webserver_restart():
+    """
+    Restarts the webserver that is running the Django instance
+    """
+    try:
+        run("kill -HUP $(cat %s)" % GUNICORN_PIDFILE)
+    except:
+        webserver_start()
+
+
+def _is_webserver_running():
+    try:
+        pid = int(open(GUNICORN_PIDFILE).read().strip())
+    except (IOError, OSError):
+        return False
+    for ps in psutil.process_iter():
+        if (ps.pid == pid and
+            any('gunicorn' in c for c in ps.cmdline)
+            and ps.username == USER):
+            return True
+    return False
+
+
+@task
+def local_webserver_start():
+    """
+    Starts the webserver that is running the Django instance, on the local machine
+    """
+    if not _is_webserver_running():
+        local(_webserver_command())
+
+
+def build_static():
+    with virtualenv(VENV_DIR):
+        with cd(SRC_DIR):
+            run_venv("./manage.py collectstatic -v 0 --noinput --clear")
+
+    run("chmod -R ugo+r %s" % STATIC_ROOT)
+
+
+@task
+def first_deployment_mode():
+    """
+    Use before first deployment to switch on fake south migrations.
+    """
+    env.initial_deploy = True
+
+
+def update_database():
+    with virtualenv(VENV_DIR):
+        with cd(SRC_DIR):
+            if getattr(env, 'initial_deploy', False):
+                run_venv("./manage.py syncdb --all")
+                run_venv("./manage.py migrate --fake --noinput")
+            else:
+                run_venv("./manage.py syncdb --noinput")
+                run_venv("./manage.py migrate --noinput")
+
+
+@task
 def deploy():
-    label = datetime.now().strftime("%Y-%m-%d_%H.%M.%S")
-    version = target.make_version(label)
-
-    _update_project_sources(target, version)
-    _update_virtualenv(version)
-    _build_static(version)
-
-    # Ideally, we:
-    # 1) stop web server
-    # 2) updated db
-    # 3) rollback if unsuccessful.
-    # 4) restart webserver
-
-    # In practice, for this low traffic site it is better to keep website
-    # going for as much time as possible, and cope with any small bugs that
-    # come from mismatch of db and code.
-
-    db_backup_name = backup_database(target, version)
-    _update_db(target, version)
-    stop_apache()
-    _update_symlink(target, version)
-    start_apache()
-
-
-def clean():
     """
-    Misc clean-up tasks
+    Deploy project.
     """
-    # Remove old src versions.
-    with cd(target.src_root):
-        with hide("stdout"):
-            currentlink = run("readlink current").split('/')[-1]
-            otherlinks = set([x.strip() for x in run("ls src-* -1d").split("\n")])
-        otherlinks.remove(currentlink)
-        otherlinks = list(otherlinks)
-        otherlinks.sort()
-        otherlinks.reverse()
-
-        # Leave the most recent previous version, delete the rest
-        for d in otherlinks[1:]:
-            run("rm -rf %s" % d)
+    push_sources()
+    _push_non_vcs_sources()
+    install_dependencies()
+    update_database()
+    build_static()
+    with settings(warn_only=True):
+        webserver_stop()
+    webserver_start()
 
 
-def staging():
-    global target
-    target = STAGING
+def _push_non_vcs_sources():
+    # Also need to sync files that are not in main sources VCS repo.
+    local("rsync christchurch/settings_priv.py cciw@christchurchbradford.org.uk:%s/christchurch/settings_priv.py" % SRC_DIR)
 
 
-def production():
-    global target
-    target = PRODUCTION
 
+
+@task
+def get_live_db():
+    filename = "dump_%s.db" % DB_NAME
+    run("pg_dump -Fc -U %s -O -o -f ~/%s %s" % (DB_USER, filename, DB_NAME))
+    get("~/%s" % filename)
+
+
+@task
+def local_restore_from_dump(filename):
+    # DB might not exist, allow error
+    commands = """
+DROP DATABASE %(DB)s;
+CREATE DATABASE %(DB)s;
+CREATE USER %(USER)s WITH PASSWORD 'foo';
+GRANT ALL ON DATABASE %(DB)s TO %(USER)s;
+ALTER USER %(USER)s CREATEDB;
+""" % {'DB': DB_NAME_DEV, 'USER': DB_USER_DEV}
+
+    for c in commands.strip().split('\n'):
+        local("""sudo -u postgres psql -U postgres -d template1 -c "%s" | true """
+              % c)
+
+    local("pg_restore -O -U %s -d %s %s" %
+          (DB_USER_DEV, DB_NAME_DEV, filename))
 
 
 def upload_usermedia():
-    local("chmod ugo+r  -R %s/*" % usermedia_local)
-    local("rsync -z -r --exclude='*.mp3' %s/ cciw@christchurchbradford.org.uk:%s" % (usermedia_local, usermedia_production), capture=False)
+    local("chmod ugo+r  -R %s/*" % MEDIA_ROOT_LOCAL)
+    local("rsync -z -r --exclude='*.mp3' %s/ cciw@christchurchbradford.org.uk:%s" % (MEDIA_ROOT_LOCAL, MEDIA_ROOT), capture=False)
 
 
 def upload_sermons():
-    local("chmod ugo+r  %s/downloads/sermons/*" % usermedia_local)
-    local("rsync -v --progress --size-only %s/downloads/sermons/* cciw@christchurchbradford.org.uk:%s/downloads/sermons" % (usermedia_local, usermedia_production))
+    local("chmod ugo+r  %s/downloads/sermons/*" % MEDIA_ROOT_LOCAL)
+    local("rsync -v --progress --size-only %s/downloads/sermons/* cciw@christchurchbradford.org.uk:%s/downloads/sermons" % (MEDIA_ROOT_LOCAL, MEDIA_ROOT))
 
 
 def backup_usermedia():
-    local("rsync -z -r  cciw@christchurchbradford.org.uk:%s/ %s" % (usermedia_production, usermedia_local), capture=False)
+    local("rsync -z -r  cciw@christchurchbradford.org.uk:%s/ %s" % (MEDIA_ROOT, MEDIA_ROOT_LOCAL), capture=False)
 
 
 
