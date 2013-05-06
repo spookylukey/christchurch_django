@@ -20,3 +20,4 @@ django-sekizai==0.6.1
 fabric==1.6.0
 gunicorn==0.17.4
 psutil==0.7.1
+Pillow
