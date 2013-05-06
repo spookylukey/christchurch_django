@@ -12,9 +12,6 @@ parentdir = os.path.dirname(basedir)
 DEVBOX = ('webfaction' not in hostname)
 LIVEBOX = not DEVBOX
 
-if LIVEBOX:
-    from .settings_priv import PRODUCTION, STAGING
-
 WEBSERVER_RUNNING = 'mod_wsgi' in sys.argv
 
 if DEVBOX:
@@ -38,6 +35,11 @@ if DEVBOX:
 else:
     from .settings_priv import DATABASES
 
+if DEVBOX:
+    # Don't want to use WebFaction API from development
+    WEBFACTION_PASSWORD = None
+    WEBFACTION_USER = None
+
 
 ADMINS = (
     ('Christ Church webmaster', 'webmaster@christchurchbradford.org.uk'),
@@ -58,12 +60,12 @@ USE_I18N = False
 
 USE_L10N = False
 
-STATIC_ROOT = os.path.join(parentdir, 'static')
 
 if DEVBOX:
+    STATIC_ROOT = os.path.join(parentdir, 'static')
     MEDIA_ROOT = os.path.join(parentdir, 'usermedia')
 else:
-    from .settings_priv import MEDIA_ROOT, GOOGLE_ANALYTICS_ACCOUNT
+    from .settings_priv import STATIC_ROOT, MEDIA_ROOT, GOOGLE_ANALYTICS_ACCOUNT
 
 MEDIA_URL = '/usermedia/'
 STATIC_URL = '/static/'
