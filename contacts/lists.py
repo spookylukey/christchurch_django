@@ -34,5 +34,5 @@ def update_home_group_lists(*args, **kwargs):
         contacts.add(c.email)
 
     s.update_email('church-contacts@christchurchbradford.org.uk', ', '.join(list(contacts)))
-    s.update_email('church-members@christchurchbradford.org.uk', ', '.join(list(members)))
+    s.update_email('members@christchurchbradford.org.uk', ', '.join(list(members)))
 
