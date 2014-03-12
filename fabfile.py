@@ -2,7 +2,7 @@ import os
 import os.path
 import posixpath
 
-from fabric.api import run, local, abort, env, put, task
+from fabric.api import run, local, abort, env, put, get, task
 from fabric.contrib.files import exists
 from fabric.context_managers import cd, lcd, settings, hide
 import psutil
@@ -83,7 +83,8 @@ MEDIA_ROOT_LOCAL = os.path.join(PARENT_DIR, 'usermedia')
 
 DB_NAME = 'cciw_christchurch'
 DB_USER = 'cciw_christchurch'
-
+DB_NAME_DEV = 'christchurch'
+DB_USER_DEV = 'christchurch'
 
 def virtualenv(venv_dir):
     """
