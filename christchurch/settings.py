@@ -71,7 +71,7 @@ else:
 
 MEDIA_URL = '/usermedia/'
 STATIC_URL = '/static/'
-ADMIN_MEDIA_PREFIX = '/static/admin/'
+
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -177,13 +177,10 @@ FILE_UPLOAD_PERMISSIONS = 0644
 
 #####  EMAIL  #######
 
+SEND_BROKEN_LINK_EMAILS = False
+
 if DEVBOX:
-    # For e-mail testing, use fakemail
-    EMAIL_HOST = 'localhost'
-    EMAIL_HOST_USER = None
-    EMAIL_HOST_PASSWORD = None
-    EMAIL_PORT = 8025
-    SEND_BROKEN_LINK_EMAILS = True
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 else:
     SERVER_EMAIL = "website@christchurchbradford.org.uk"
@@ -191,7 +188,6 @@ else:
     EMAIL_HOST = "smtp.webfaction.com"
     from .settings_priv import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD
 
-    SEND_BROKEN_LINK_EMAILS = False
 
 ## WEBFACTION API
 
