@@ -45,6 +45,10 @@ ADMINS = (
     ('Christ Church webmaster', 'webmaster@christchurchbradford.org.uk'),
 )
 
+ALLOWED_HOSTS = ["www.christchurchbradford.org.uk",
+                 "christchurchbradford.org.uk",
+                 ]
+
 MANAGERS = ADMINS
 
 TIME_ZONE = "Europe/London"
