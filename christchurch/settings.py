@@ -49,10 +49,12 @@ MANAGERS = ADMINS
 
 TIME_ZONE = "Europe/London"
 
-LANGUAGES = [('en', 'en')]
+LANGUAGES = [
+    ('en', 'English'),
+]
 DEFAULT_LANGUAGE = 0
 
-LANGUAGE_CODE = 'en-gb'
+LANGUAGE_CODE = 'en'
 
 SITE_ID = 1
 
@@ -139,6 +141,11 @@ INSTALLED_APPS = [
     'easy_thumbnails',
     'inline_ordering',
 ]
+
+SOUTH_MIGRATION_MODULES = {
+        'easy_thumbnails': 'easy_thumbnails.south_migrations',
+    }
+
 
 CMS_TEMPLATES = (
     ('standard.html', 'Standard Template'),
