@@ -1,14 +1,24 @@
 from django.contrib import admin
+from import_export import resources
+from import_export.admin import ExportMixin
 
 from .models import Contact, HomeGroup
 
 
 CONTACT_VIEWER_GROUP_NAME = 'Contact viewers'
 
+
+class ContactResource(resources.ModelResource):
+    class Meta:
+        model = Contact
+
+
 def is_contact_viewer(user):
     return user.groups.filter(name=CONTACT_VIEWER_GROUP_NAME).exists()
 
-class ContactAdmin(admin.ModelAdmin):
+
+class ContactAdmin(ExportMixin, admin.ModelAdmin):
+    resource_class = ContactResource
     def address(obj):
         return ', '.join(obj.address.strip().split('\n'))
     list_display = ['name', address, 'post_code', 'phone_number', 'mobile_number', 'email', 'church_member', 'home_group']

@@ -144,6 +144,7 @@ INSTALLED_APPS = [
     'cmsplugin_gallery',
     'easy_thumbnails',
     'inline_ordering',
+    'import_export',
 ]
 
 SOUTH_MIGRATION_MODULES = {
