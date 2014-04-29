@@ -20,7 +20,7 @@ def is_contact_viewer(user):
 class ContactAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = ContactResource
     def address(obj):
-        return ', '.join(obj.address.strip().split('\n'))
+        return ', '.join(l.strip() for l in obj.address.strip().split('\n'))
     list_display = ['name', address, 'post_code', 'phone_number', 'mobile_number', 'email', 'church_member', 'home_group']
     list_filter = ['church_member', 'home_group']
 
