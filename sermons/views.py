@@ -7,7 +7,6 @@ from sermons.models import Sermon
 class SermonFilterSet(FilterSet):
     fields = [
         ('speaker', dict(order_by_count=True)),
-        'series',
         'bible_book',
         ('date_delivered', dict(max_links=6,
                                 max_depth='month')),
@@ -15,7 +14,6 @@ class SermonFilterSet(FilterSet):
 
     title_fields = [
         'speaker',
-        'series',
         'bible_book'
         ]
 
