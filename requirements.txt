@@ -32,7 +32,7 @@ pyquery==1.2.8
 python-dateutil==1.4.1
 pytz==2013.9
 requests==2.2.1
--e hg+ssh://hg@bitbucket.org/spookylukey/semanticeditor@9a02b95e907b56d1ae3c8282aefc763120fe1adb#egg=semanticeditor-dev
+-e hg+ssh://hg@bitbucket.org/spookylukey/semanticeditor@ee9ab28ec898d22b802a225fd861894745e86942#egg=semanticeditor-dev
 six==1.6.1
 sqlparse==0.1.11
 tablib==0.9.11
