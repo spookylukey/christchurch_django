@@ -324,6 +324,11 @@ img.left, .align-left img {
     margin-bottom: 5px;
 }
 
+.plugin_picture.align-center {
+    display: block;
+    text-align: center;
+}
+
 #photochanger {
     width: 450px;
     height: 200px;
