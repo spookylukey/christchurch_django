@@ -300,8 +300,9 @@ def upload_sermons():
     local("rsync -v --progress --size-only %s/downloads/sermons/* cciw@christchurchbradford.org.uk:%s/downloads/sermons" % (MEDIA_ROOT_LOCAL, MEDIA_ROOT))
 
 
+@task
 def backup_usermedia():
-    local("rsync -z -r  cciw@christchurchbradford.org.uk:%s/ %s" % (MEDIA_ROOT, MEDIA_ROOT_LOCAL), capture=False)
+    local("rsync -z -r --progress cciw@christchurchbradford.org.uk:%s/ %s" % (MEDIA_ROOT, MEDIA_ROOT_LOCAL), capture=False)
 
 
 
