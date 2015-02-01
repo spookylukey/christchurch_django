@@ -532,6 +532,7 @@ div.sermon {
     border-radius: 5px;
     padding: 5px;
     margin-bottom: 5px;
+    clear: both;
 }
 
 .sermon h3 {
@@ -541,7 +542,7 @@ div.sermon {
 
 p.sermonactions, p.sermondetails {
     margin: 4px 8px;
-    padding: 2px 4px;
+    padding: 4px 8px;
 }
 
 p.sermondetails {
@@ -549,6 +550,13 @@ p.sermondetails {
     border: 1px solid #c0c0c0;
 }
 
+p.sermonactions {
+    float: right;
+    padding: 4px 8px;
+    border: 1px solid #c0c0c0;
+    border-radius: 4px;
+    background-color: #fff;
+}
 .sermonactions img {
     vertical-align: bottom;
     margin-right: 4px;

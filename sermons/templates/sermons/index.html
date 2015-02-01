@@ -20,14 +20,15 @@
   {% endifchanged %}
   <div class="sermon">
     <h3>{% if sermon.title %}{{ sermon.title }}{% if sermon.nice_passage %} - {% endif %}{% endif %}{{ sermon.nice_passage }}</h3>
-    <p class="sermondetails"><span class="sermondate">{{ sermon.date_delivered|date:"F j, Y" }}</span>
-      | <span class="sermontime">{{ sermon.nice_time }}</span>
-      | <span class="speaker">by <a href="?speaker={{ sermon.speaker.id }}">{{ sermon.speaker }}</a></span>
+    <p class="sermonactions"><a href="{{ sermon.sermon.url }}"><img src="{{ STATIC_URL }}christchurch/img/audio-icon-small.png" />Listen/download</a></p>
+    <p class="sermondetails">
+      <i><span class="sermondate">{{ sermon.date_delivered|date:"F j, Y" }}</span>,
+        <span class="sermontime">{{ sermon.nice_time }}</span></i>
+      <br/> <span class="speaker">by <a href="?speaker={{ sermon.speaker.id }}">{{ sermon.speaker }}</a></span>
       {% if sermon.series and 'series' not in request.GET %}
-      | From series <a href="?series={{ sermon.series.id }}">{{ sermon.series.name }}</a>
+      » From series <a href="?series={{ sermon.series.id }}">{{ sermon.series.name }}</a>
       {% endif %}
     </p>
-    <p class="sermonactions"><a href="{{ sermon.sermon.url }}"><img src="{{ STATIC_URL }}christchurch/img/audio-icon-small.png" />Listen/download</a></p>
   </div>
 {% endfor %}
 
