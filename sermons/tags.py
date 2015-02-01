@@ -4,9 +4,8 @@ Deals with reading/writing MP3 tags and metadata in sermon filename
 from datetime import date, time
 import os
 import re
-import sys
 
-from mutagen.id3 import ID3, TIT2, TDRC, TPE1, TIME, COMM
+from mutagen.id3 import ID3, TIT2, TDRC, TPE1, COMM
 from sermons.models import BIBLE_BOOKS, BIBLE_NAME_TO_VAL, Speaker, Series, Topic
 
 
