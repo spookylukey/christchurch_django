@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.shortcuts import render
 from django_easyfilters import FilterSet
 
@@ -10,11 +9,12 @@ class SermonFilterSet(FilterSet):
         'bible_book',
         ('date_delivered', dict(max_links=6,
                                 max_depth='month')),
+        'series',
         ]
 
     title_fields = [
         'speaker',
-        'bible_book'
+        'bible_book',
         ]
 
 
