@@ -47,12 +47,15 @@ class SermonManager(models.Manager):
 
 class Sermon(models.Model):
     sermon = models.FileField(upload_to=SERMONS_PATH, max_length=255,
+                              blank=True,
                               help_text="""The file name must be in the form:<br/>
 &nbsp;&nbsp;<code>YYYY-MM-DD HHmm Speaker Name - Title - Passage.mp3</code><br/>
 For example:<br/>
 &nbsp;&nbsp;<code>2011-06-26 1700 Joe Bloggs - In the beginning - Genesis 1v1-2.mp3</code><br/>
 <br/>
-Title and Passage are optional.
+Title and Passage are optional.<br>
+<br>
+<p><a href="/admin/sermons/sermon/add/?no_mp3">Add without MP3</a></p>
 """)
     speaker = models.ForeignKey(Speaker)
     title = models.CharField(max_length=255, blank=True)
@@ -62,6 +65,7 @@ Title and Passage are optional.
     series = models.ForeignKey(Series, null=True, blank=True)
     date_delivered = models.DateField(db_index=True)
     time_delivered = models.TimeField(db_index=True)
+    notes = models.TextField(blank=True, help_text="Format as ReStructuredText")
     published = models.BooleanField()
 
     objects = SermonManager()

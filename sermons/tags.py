@@ -16,6 +16,8 @@ def set_attrs_from_filename(sermon):
     """
     Fills in the details that can be found from the filename
     """
+    if sermon.sermon.name == "":
+        return
 
     filename = os.path.basename(sermon.sermon.name)
     m_filename = expected_filename_re.match(filename)
@@ -67,6 +69,8 @@ def set_attrs_from_filename(sermon):
 
 
 def write_id3_tags(sermon):
+    if sermon.sermon.name == "":
+        return
     fname = sermon.sermon.file.name
     UTF8 = 3 # mutagen.id3 says so.
     try:

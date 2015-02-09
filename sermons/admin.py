@@ -25,7 +25,7 @@ class SermonAdmin(admin.ModelAdmin):
     list_per_page = 200
 
     def get_form(self, request, obj=None, **kwargs):
-        if obj is None:
+        if obj is None and not "no_mp3" in request.GET:
             # For add view, we have a simplified form that just has an upload field.
             return modelform_factory(self.model,
                                      fields=["sermon"],
