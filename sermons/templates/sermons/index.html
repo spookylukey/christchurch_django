@@ -20,7 +20,14 @@
   {% endifchanged %}
   <div class="sermon">
     <h3>{% if sermon.title %}{{ sermon.title }}{% if sermon.nice_passage %} - {% endif %}{% endif %}{{ sermon.nice_passage }}</h3>
-    <p class="sermonactions"><a href="{{ sermon.sermon.url }}"><img src="{{ STATIC_URL }}christchurch/img/audio-icon-small.png" />Listen/download</a></p>
+    <p class="sermonactions">
+      {% if sermon.sermon.name %}
+        <a href="{{ sermon.sermon.url }}"><img src="{{ STATIC_URL }}christchurch/img/audio-icon-small.png" />Listen/download</a><br/>
+      {% endif %}
+      {% if sermon.notes or True %}
+        <a href="{% url 'sermon_read' sermon.id %}">Read</a>
+      {% endif %}
+    </p>
     <p class="sermondetails">
       <i><span class="sermondate">{{ sermon.date_delivered|date:"F j, Y" }}</span>,
         <span class="sermontime">{{ sermon.nice_time }}</span></i>

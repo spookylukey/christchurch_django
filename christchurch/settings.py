@@ -145,6 +145,7 @@ INSTALLED_APPS = [
     'easy_thumbnails',
     'inline_ordering',
     'import_export',
+    'django_markup',
 ]
 
 SOUTH_MIGRATION_MODULES = {
@@ -210,3 +211,12 @@ if DEBUG:
 
     INTERNAL_IPS = ('127.0.0.1',)
     INSTALLED_APPS.append("debug_toolbar")
+
+
+MARKUP_SETTINGS = {
+    'restructuredtext': {
+        'settings_overrides': {
+            'initial_header_level': 1,
+            }
+        }
+    }

@@ -1,0 +1,28 @@
+{% extends "standard.html" %}
+
+{% load markup_tags %}
+
+{% block title %}Sermon: {{ sermon.title }}, by {{ sermon.speaker.name }}{% endblock %}
+
+{% block content %}
+
+  <div class="fullsermon">
+    <h1>{{ sermon.title }}</h1>
+
+    {% if sermon.series %}
+      <p>From series <a href="../../?series={{ sermon.series.id }}">{{ sermon.series.name }}</a></p>
+    {% endif %}
+
+
+    <p class="speaker">by <a href="../../?speaker={{ sermon.speaker.id }}">{{ sermon.speaker.name }}</a></p>
+
+    <p><time class="sermondate" datetime="{{ sermon.date_delivered|date:"c" }}">{{ sermon.date_delivered|date:"F j, Y" }}</time></p>
+
+    <hr>
+    <br>
+    <div class="sermonnotes">
+      {{ sermon.notes|apply_markup:"restructuredtext" }}
+    </div>
+  </div>
+
+{% endblock %}

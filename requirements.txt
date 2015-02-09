@@ -38,3 +38,5 @@ sqlparse==0.1.11
 tablib==0.9.11
 vobject==0.6.6
 wsgiref==0.1.2
+django-markup==0.4
+docutils==0.12

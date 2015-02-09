@@ -556,8 +556,23 @@ p.sermonactions {
     border: 1px solid #c0c0c0;
     border-radius: 4px;
     background-color: #fff;
+    text-align: right;
 }
 .sermonactions img {
     vertical-align: bottom;
     margin-right: 4px;
+}
+
+.fullsermon .speaker {
+    font-style: italic;
+}
+.fullsermon .sermondate {
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+.fullsermon hr {
+    height: 1px;
+    color: #aaa;
+    border-color: #aaa;
 }
