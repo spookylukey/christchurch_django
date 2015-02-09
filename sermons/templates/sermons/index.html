@@ -24,7 +24,7 @@
       {% if sermon.sermon.name %}
         <a href="{{ sermon.sermon.url }}"><img src="{{ STATIC_URL }}christchurch/img/audio-icon-small.png" />Listen/download</a><br/>
       {% endif %}
-      {% if sermon.notes or True %}
+      {% if sermon.notes %}
         <a href="{% url 'sermon_read' sermon.id %}">Read</a>
       {% endif %}
     </p>
