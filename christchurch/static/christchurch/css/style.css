@@ -201,7 +201,7 @@ h3 { font-size: 1.0em; }
 /* NAVBAR */
 #navbarcont {
     margin: 0;
-    padding: 0.5em 0;
+    padding: 0;
     border-top: 1px solid #993366;
     border-bottom: 1px solid #993366;
     color: black;
@@ -217,13 +217,14 @@ h3 { font-size: 1.0em; }
 }
 
 #navbarcont ul li {
-    display: inline;
+    display: inline-block;
     list-style-type: none;
     margin: 0;
 }
 
 #navbarcont ul li a
 {
+    display: inline-block;
     padding: 0.5em 1em;
     color: #660033;
     text-decoration: none;
@@ -233,16 +234,12 @@ h3 { font-size: 1.0em; }
 #navbarcont ul li.selected a {
     background-color: #660033;
     color: #fff;
-    border-top: 1px solid #660033;
-    border-bottom: 1px solid #660033;
 }
 
 #navbarcont ul li a:hover
 {
     background-color: #993366;
     color: #fff;
-    border-top: 1px solid #993366;
-    border-bottom: 1px solid #993366;
 }
 
 /* GENERAL */
@@ -575,4 +572,34 @@ p.sermonactions {
     height: 1px;
     color: #aaa;
     border-color: #aaa;
+}
+
+
+
+@media screen and (max-width: 530px) {
+    .columns2 .column,
+    .column .columns2 .column   {
+        width: 100%; 
+    }
+
+    img {
+        max-width: 100%;
+        width: auto;
+        height: auto;
+    }
+
+    #photochanger {
+        max-width: 100%;
+        width: 100%;
+        border: 0px;
+    }
+    .photocont {
+        overflow: auto;
+	width: 100%;
+    }
+
+    #photochanger {
+        height: auto;
+    }
+
 }

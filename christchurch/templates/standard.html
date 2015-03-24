@@ -59,23 +59,20 @@
     </div>
   </div>
 {% addtoblock "js" %}
-  <script type="text/javascript" src="{{ STATIC_URL }}admin/js/jquery.min.js"></script>
-{% endaddtoblock %}
-
-{% addtoblock "js" %}
-  <script type="text/javascript" src="{{ STATIC_URL }}christchurch/js/jquery.cycle.lite.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}christchurch/js/jquery-1.11.2.min.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}christchurch/js/jquery.cycle2.min.js"></script>
 {% endaddtoblock %}
 
 {% addtoblock "js" %}
   <script type="text/javascript">
-jQuery(document).ready(function(event) {
+$(document).ready(function(event) {
 
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie != '') {
             var cookies = document.cookie.split(';');
             for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
+                var cookie = $.trim(cookies[i]);
                 // Does this cookie string begin with the name we want?
                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
@@ -94,12 +91,12 @@ jQuery(document).ready(function(event) {
                 setTimeout(addImages, 1000);
             } else {
                 list = list.split('|');
-                if (jQuery('#photochanger img').length == 1) {
+                if ($('#photochanger img').length == 1) {
                     for (var i = 0; i < list.length; i++) {
-                        jQuery('#photochanger').append("<img src='/usermedia/photos/slideshow/" + list[i] +  "' width='450' height='200' alt='' />");
+                        $('#photochanger').append("<img src='/usermedia/photos/slideshow/" + list[i] +  "' alt='' />");
                     }
                 }
-                jQuery('#photochanger').cycle({
+                $('#photochanger').cycle({
                     timeout: 4000,
                     delay: -1000,
                     sync: 0
@@ -118,14 +115,6 @@ jQuery(document).ready(function(event) {
 {# sekizai, which wants the js block at the bottom      #}
  
 {% addtoblock "js" %}
-<script type="text/javascript" src="{{ STATIC_URL }}christchurch/js/jquery.tools.min.js"></script>
-{% endaddtoblock %}
-{% addtoblock "js" %}
-<script type="text/javascript">
-jQuery(document).ready(function () {
-    jQuery('.gallery img').overlay();
-});
-</script>
 
 <script type="text/javascript">
 (function($) {
