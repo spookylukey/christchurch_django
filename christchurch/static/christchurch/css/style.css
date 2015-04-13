@@ -85,6 +85,11 @@ blockquote {
     margin-bottom: 1em;
 }
 
+.line-block {
+    line-height: 1.5;
+    margin-bottom: 2em;
+}
+
 /* END RESTORE */
 
 body {
