@@ -38,7 +38,7 @@ import psutil
 
 
 USER = 'cciw'
-HOST = 'christchurchbradford.org.uk'
+HOST = 'cciw.co.uk'
 APP_NAME = 'christchurch'
 APP_PORT = 29584
 GUNICORN_WORKERS = 2

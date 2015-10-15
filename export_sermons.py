@@ -12,7 +12,7 @@ from sermons.models import Sermon
 writer = csv.writer(file("talks.csv", "w"))
 
 writer.writerow(["Series Name", "Talk Title", "Speaker", "Date (DD/MM/YYYY)", "Description",
-                 "File Name", "Bible Passage", "Bible Book"])
+                 "File Name", "Bible Passage", "Bible Book", "MP3 url"])
 # Revelation - Jesus Unveiled,The Perfect Kingdom,Rev Bloggs,30/01/2015,Evening Service,rev-21.mp3,Revelation 21:1-10; Revelation 22:1-5,Revelation
 
 for sermon in Sermon.objects.all().select_related('speaker', 'series').order_by('date_delivered'):
@@ -29,5 +29,6 @@ for sermon in Sermon.objects.all().select_related('speaker', 'series').order_by(
     writer.writerow([series, sermon.title, sermon.speaker.name, sermon.date_delivered.strftime('%d/%m/%Y'), description,
                      sermon.sermon.name.rsplit('/')[-1] if sermon.sermon is not None else '',
                      sermon.passage,
-                     book if book != "(Unspecified)" else ""
+                     book if book != "(Unspecified)" else "",
+                     ("http://www.christchurchbradford.org.uk" + sermon.sermon.url) if sermon.sermon else "",
                      ])
